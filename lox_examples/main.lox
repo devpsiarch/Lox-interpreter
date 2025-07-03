@@ -1,0 +1,62 @@
+// missing features : 
+// IO with OS
+// pointers
+
+
+
+print "hello world";
+
+"some expression"; // return nil
+
+fun sum(a,b) {
+    return a+b;
+}
+
+fun sqrt(a) {
+    return a*a;
+}
+
+
+fun outer() {
+
+    var outside = "the nice friend" ;
+
+    fun inner(){
+        print outside;
+    }
+    
+    return inner;
+}
+
+var fn=  outer();
+fn();
+
+var x;
+
+class Breakfast {
+
+    init(n,f,a) {
+        this.name = n;
+        this.food = f;
+        this.age = a;
+        this.b = "hello";
+    }
+
+    cook() {
+        print "Cooking right now";
+    }
+
+    server() {
+        print this.name + " served " + this.b;
+    }
+}
+
+class Morning < Breakfast {
+    init(watch,f,n,a) {
+        super.init(n,f,a);
+        this.watch = watch;
+    }
+}
+
+var n = Breakfast("josh","pizza",16);
+n.server();

@@ -1,0 +1,18 @@
+/* the is here 
+/* /* is here  */  */
+
+*/
+
+// this is a comment
+
+(( )){} // grouping stuff
+!*+-/=<> <= == // operators
+"hello friend"
+15
+18.12
+"hello friend"
+and or
+var x = 5;
+fun good(a) {
+    return 5;
+}
