@@ -11,7 +11,8 @@ BIN := main
 
 # Find all .cpp files in src directory
 SRCS := $(wildcard $(SRC_DIR)/*.cpp)
-INCS := $(wildcard $(INC_DIR)/*.h)
+INCS := $(wildcard $(INC_DIR)/*.h) $(INC_DIR)/tool/tool.h
+
 
 # Replace src/ with build/ and .cpp with .o for object files
 OBJS := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRCS))

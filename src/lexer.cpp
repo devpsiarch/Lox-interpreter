@@ -1,36 +1,6 @@
 #include "../include/lexer.h"
-
-
-std::string stdany_to_string(const std::any& a){
-    if(!a.has_value()) return "[Empty std::any]";
-
-    const std::type_info& t = a.type();
-    std::ostringstream out;
-
-    if (t == typeid(int)) {
-        out << std::any_cast<int>(a);
-    }
-    else if (t == typeid(double)) {
-        out << std::any_cast<double>(a);
-    }
-    else if (t == typeid(bool)) {
-        out << (std::any_cast<bool>(a) ? "true" : "false");
-    }
-    else if (t == typeid(std::string)) {
-        out << std::any_cast<std::string>(a);
-    }
-    else if (t == typeid(std::nullptr_t)) {
-        out << "nullptr";
-    }
-    else {
-        // fallback: print the mangled type name
-        out << "[unsupported type: " << t.name() << "]";
-    }
-
-    return out.str();
-}
-
-
+#define TOOL_IMPLI
+#include "../include/tool/tool.h"
 void Logger::report(int line,int col,std::string&where,std::string&msg){
     std::cout << "[line" << line << ':' << col << "] Error " << where << ": "
         << msg << '\n';

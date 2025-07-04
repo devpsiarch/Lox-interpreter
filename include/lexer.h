@@ -1,13 +1,9 @@
 #pragma once
-#include <string>
 #include <vector>
 #include <unordered_map>
 #include <stack>
 #include <cmath>
-#include <fstream>
-#include <sstream>
-#include <iostream>
-#include <any>
+#include "./tool/tool.h"
 
 enum TokenType {
     // signifies no type 
@@ -36,8 +32,7 @@ enum TokenType {
 
 // returns std::string literal of the TokenType enum
 std::string type_to_string(enum TokenType);
-// returns a std::string for an std::any 
-std::string stdany_to_string(const std::any& a);
+
 // this class is here to help us print 
 // error while we are interpriting
 class Logger {
@@ -55,9 +50,9 @@ public:
     size_t col;
     Token(enum TokenType t,
           const std::string&l,
-          std::any lit,
-          size_t line,
-          size_t col);
+          std::any lit = nullptr,
+          size_t line = 0,
+          size_t col = 0);
     Token(const Token&other);
     Token& operator=(const Token&other);
     std::string toString();
