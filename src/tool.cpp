@@ -1,7 +1,7 @@
 #include "../include/tool/tool.h"
 
 std::string stdany_to_string(const std::any& a){
-    if(!a.has_value()) return "[Empty std::any]";
+    if(!a.has_value()) return "nil";
 
     const std::type_info& t = a.type();
     std::ostringstream out;

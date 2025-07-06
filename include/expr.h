@@ -31,7 +31,7 @@ public:
         private:template <typename ...Exprs> std::string parenthensize(std::string name,Exprs*... exprs){
             std::ostringstream builder;
             builder << "(" << name ;
-            ((builder << " " << std::any_cast<std::string>(exprs->accept(*this))), ...); 
+            ((builder << " " << stdany_to_string(exprs->accept(*this))), ...); 
             builder << ")";
             return builder.str();
         }
@@ -46,6 +46,7 @@ class Literal : public Expression {
 public:
     std::any value;
     explicit Literal(std::any val){
+        std::cout << "Created literal " << stdany_to_string(val) << '\n';
         this->value = val;
     }
     virtual std::any accept(Visitor& visitor) override  final {

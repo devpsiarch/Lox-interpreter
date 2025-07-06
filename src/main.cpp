@@ -237,6 +237,9 @@ int main(void){
 
     // 15) Complex combo: (! (group (+ "x" (* 5 nil))))
     {
+        try {
+
+        
         Unary expr14(
             Token(BANG, "!"),
             new Grouping(
@@ -256,6 +259,10 @@ int main(void){
             v.astprinter(&expr14),
             "Wrong on complex combo of all types"
         );
+        }catch(std::exception&e){
+            std::cout << "Exception: " << e.what() << '\n';
+        }
+
     }
     EndTesta();
     return 0;
