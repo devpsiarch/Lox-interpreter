@@ -11,12 +11,13 @@ int main(int argc,char *argv[]){
         Expression::Visitor v;
         Lexer l = Lexer(read_file("lox_examples/expr.lox"));
         l.scanSource();
-        parser p = parser(l.tokens);
-        Expression* expr = p.parse();
-        std::cout << v.astprinter(expr) << '\n';
         for(Token&t:l.tokens){
             std::cout << t.toString() << '\n';
         }
+        parser p = parser(l.tokens);
+        Expression* expr = p.parse();
+        std::cout << v.astprinter(expr) << '\n';
+
         delete expr;
         return 0;
         if(argc > 2 ){

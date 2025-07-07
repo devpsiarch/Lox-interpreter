@@ -54,10 +54,32 @@ Token parser::consume(TokenType type,const char*msg){
 Expression* parser::expression(){
     if(this->match(TokenType::LEFT_PAREN)){
         std::unique_ptr<Expression> left(this->expression());
+        if(this->match(TokenType::RIGHT_PAREN)){
+            if(this->match(TokenType::TERNARY)){
+                // NOTE: this piece of code is handling the ?: turnary operator.
+                // evaluatation for this operator should be done here to determine 
+                // what expression to return , either middle or right 
+                // based on the value of the left (most likely).
+                std::unique_ptr<Expression> middle(this->expression());
+                try {
+                    this->consume(TokenType::COLEN,"Missing \':\' for turnary operator.");
+                    std::unique_ptr<Expression> right(this->expression());
+                    this->consume(TokenType::SEMICOLEN,"Missing \';\' for turnary operator.");
+                    // for now we always return the middle expression
+                    return middle.release();
+                }
+                catch(const parserError&e) {
+                    std::string err_msg = e.what();
+                    Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
+                }
+            }
+        }
         while(!this->match(TokenType::RIGHT_PAREN)){
             try {
-                this->consume(TokenType::COMMA,"Missing \',\' in comma expression.");
-                // it has to be evaluated before hand tho.
+                // NOTE: this piece of code is handling the comma expression 
+                // that is supposed to evaluate all the expressions seperated by a comma 
+                // and only return the last one (done only returning).
+                this->consume(TokenType::COMMA,"Missing \',\' in comma expression."); 
                 left.reset(this->expression());
             }catch(const parserError&e){
                 std::string err_msg = e.what();

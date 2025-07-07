@@ -52,6 +52,8 @@ std::string type_to_string(enum TokenType t){
         case TokenType::MINUS: return "MINUS";
         case TokenType::PLUS: return "PLUS";
         case TokenType::SEMICOLEN: return "SEMICOLEN";
+        case TokenType::COLEN: return "COLEN";
+        case TokenType::TERNARY: return "TERNARY";
         case TokenType::SLASH: return "SLASH";
         case TokenType::STAR: return "STAR";
 
@@ -231,6 +233,8 @@ void Lexer::scanToken(){
         case '-': this->addToken(MINUS); break;
         case '+': this->addToken(PLUS); break;
         case ';': this->addToken(SEMICOLEN); break;
+        case ':': this->addToken(COLEN); break;
+        case '?': this->addToken(TERNARY); break;
         case '*': this->addToken(STAR); break;
         case '!': 
             addToken(match('=') ? BAND_EQUAL : BANG);
@@ -276,7 +280,10 @@ void Lexer::scanToken(){
                 if(type == TokenType::NONE) type = TokenType::IDENTIFIER;
                 this->addToken(type,val);
             }else{
-                std::string msg = "Unexpected character.";
+                std::string msg = "unexpected char ";  // note trailing space
+                msg += '\'';
+                msg += c;
+                msg += "\'."; 
                 Logger::error(this->line,this->current-this->start_line,msg);
             }
             break;

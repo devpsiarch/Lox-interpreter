@@ -3,10 +3,9 @@
 #include "./expr.h"
 #include <exception>
 #include <memory>
-
 // we define the complete grammer for the language as follows 
 /*  
-    expression     → equality | ( expression ("," expression)* )
+    expression     → equality |  expression ( ("," expression*) | ('?' expression ':' expression) )
     equality       → comparison ( ( "!=" | "==" ) comparison )* ;
     comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
     term           → factor ( ( "-" | "+" ) factor )* ;
