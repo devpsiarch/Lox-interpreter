@@ -52,9 +52,23 @@ Token parser::consume(TokenType type,const char*msg){
  * the exception.*/
 
 Expression* parser::expression(){
-    // since: expression     → equality ;
-    // then declarativly becomes : 
-    return this->equality();
+    if(this->match(TokenType::LEFT_PAREN)){
+        std::unique_ptr<Expression> left(this->expression());
+        while(!this->match(TokenType::RIGHT_PAREN)){
+            try {
+                this->consume(TokenType::COMMA,"Missing \',\' in comma expression.");
+                // it has to be evaluated before hand tho.
+                left.reset(this->expression());
+            }catch(const parserError&e){
+                std::string err_msg = e.what();
+                Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
+            }
+        }
+        return left.release();
+        
+    }else{
+        return this->equality();
+    }
 }
 Expression* parser::equality(){
     std::unique_ptr<Expression> left(this->comparison());
@@ -121,14 +135,14 @@ Expression* parser::primary(){
     if(this->match(TokenType::STRING,TokenType::NUMBER))
         return new Literal(previous().literal);
     if(this->match(TokenType::LEFT_PAREN)){
-        Expression* expr = this->expression();
+        std::unique_ptr<Expression> expr (this->expression());
         try {
             this->consume(TokenType::RIGHT_PAREN,"expcted \')\' before end of expression.");
         }catch(const parserError&e){
             std::string err_msg = e.what();
             Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
         }
-        return new Grouping(expr);
+        return new Grouping(expr.release());
     }
     throw parserError(this->peek(),"expected expression.");
 }

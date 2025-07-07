@@ -6,7 +6,7 @@
 
 // we define the complete grammer for the language as follows 
 /*  
-    expression     → equality ;
+    expression     → equality | ( expression ("," expression)* )
     equality       → comparison ( ( "!=" | "==" ) comparison )* ;
     comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
     term           → factor ( ( "-" | "+" ) factor )* ;
