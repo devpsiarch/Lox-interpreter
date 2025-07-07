@@ -1,8 +1,43 @@
 #include "../testa.h"
 #include "../include/lexer.h"
 #include "../include/expr.h"
+#include "../include/parser.h"
 
-int main(void){
+#define TESTING 0
+int test(void);
+
+int main(int argc,char *argv[]){
+    if(!TESTING){
+        Expression::Visitor v;
+        Lexer l = Lexer(read_file("lox_examples/expr.lox"));
+        l.scanSource();
+        parser p = parser(l.tokens);
+        Expression* expr = p.parse();
+        std::cout << v.astprinter(expr) << '\n';
+        for(Token&t:l.tokens){
+            std::cout << t.toString() << '\n';
+        }
+        delete expr;
+        return 0;
+        if(argc > 2 ){
+            std::cout << "usage: ./main <script.lox>\n";
+            return 1;
+        }else if(argc == 2){
+            // run in interactive mode
+            runFile(argv[1]);
+        }else if(argc == 1){
+            // interprite the source code
+            runPrompt();
+        }
+        return 0;
+    }else{
+        test();
+        return 0;
+    }
+}
+
+
+int test(void){
     Expression::Visitor v;
     InitTesta();
 
@@ -237,9 +272,6 @@ int main(void){
 
     // 15) Complex combo: (! (group (+ "x" (* 5 nil))))
     {
-        try {
-
-        
         Unary expr14(
             Token(BANG, "!"),
             new Grouping(
@@ -259,42 +291,8 @@ int main(void){
             v.astprinter(&expr14),
             "Wrong on complex combo of all types"
         );
-        }catch(std::exception&e){
-            std::cout << "Exception: " << e.what() << '\n';
-        }
 
     }
     EndTesta();
     return 0;
 }
-#if 1 
-int m(int argc,char *argv[]){
-    Expression::Visitor v;
-    Unary expr = Unary(Token(MINUS,"-"),new Literal(123));
-       Unary expr2 = Unary(
-    Token(BANG, "!"),
-    new Literal(std::string("false")) // string literal
-); 
-    std::cout << v.astprinter(&expr2) << '\n';
-    std::cout << "Hello";
-    return 0;
-    Lexer l = Lexer(read_file("lox_examples/test.lox"));
-    l.scanSource();
-    for(Token&t:l.tokens){
-        std::cout << t.toString() << '\n';
-    }
-    return 0;
-    if(argc > 2 ){
-        std::cout << "usage: ./main <script.lox>\n";
-        return 1;
-    }else if(argc == 2){
-        // run in interactive mode
-        runFile(argv[1]);
-    }else if(argc == 1){
-        // interprite the source code
-        runPrompt();
-    }
-    return 0;
-}
-
-#endif

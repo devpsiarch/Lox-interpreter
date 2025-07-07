@@ -19,7 +19,7 @@ std::string stdany_to_string(const std::any& a){
         out << std::any_cast<std::string>(a);
     }
     else if (t == typeid(std::nullptr_t)) {
-        out << "nullptr";
+        out << "nil";
     }
     else {
         // fallback: print the mangled type name
