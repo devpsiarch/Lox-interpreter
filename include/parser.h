@@ -5,15 +5,19 @@
 #include <memory>
 // we define the complete grammer for the language as follows 
 /*  
-    expression     → equality |  expression ( ("," expression*) | ('?' expression ':' expression) )
-    equality       → comparison ( ( "!=" | "==" ) comparison )* ;
-    comparison     → term ( ( ">" | ">=" | "<" | "<=" ) term )* ;
-    term           → factor ( ( "-" | "+" ) factor )* ;
-    factor         → unary ( ( "/" | "*" ) unary )* ;
-    unary          → ( "!" | "-" ) unary
-                   | primary ;
-    primary        → NUMBER | STRING | "true" | "false" | "nil"
-                   | "(" expression ")" ;
+
+        expression     → conditional;
+
+        conditional    → equality ( "?" expression ":" conditional )? ;
+
+        equality       → comparison ( ( "!=" | "==" ) comparison )* ;
+        comparison     → term       ( ( ">"  | ">=" ) term       )* ;
+        term           → factor     ( ( "-"  | "+"  ) factor     )* ;
+        factor         → unary      ( ( "/"  | "*"  ) unary      )* ;
+        unary          → ( "!" | "-" ) unary
+                        | primary ;
+        primary        → NUMBER | STRING | "true" | "false" | "nil"
+                        | "(" expression ( "," expression )* ")" ;
 
 
     where each "entry" or "element" or "piece" of the grammer is an expression
@@ -56,6 +60,8 @@ private:
     
     Token consume(TokenType type,const char*msg);
     Expression* expression();
+    Expression* conditional();
+    Expression* comma_expression();
     Expression* equality();
     Expression* comparison();
     Expression* term();

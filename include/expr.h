@@ -27,7 +27,7 @@ public:
         std::string astprinter(Expression*exp) {
             return stdany_to_string(exp->accept(*this));
         }
-                
+
         private:template <typename ...Exprs> std::string parenthensize(std::string name,Exprs*... exprs){
             std::ostringstream builder;
             builder << "(" << name ;
@@ -36,8 +36,31 @@ public:
             return builder.str();
         }
     };
-    
+   
+    // this is a challenge class , it will parse a expression to RPN
+    class VisitorRPN {
+    public:
+        std::any visitLiteralExpression(Literal*lit);
+        std::any visitUnaryExpression(Unary*una);
+        std::any visitBinaryExpression(Binary*bin);
+        std::any visitGroupingExpression(Grouping*gro);
+
+        std::string astprinter(Expression*exp) {
+            return stdany_to_string(exp->acceptRPN(*this));
+        }
+        private:template <typename ...Exprs> std::string parenthensize(std::string name,Exprs*... exprs){
+            std::ostringstream builder;
+            builder << "(" << name ;
+            ((builder << " " << stdany_to_string(exprs->acceptRPN(*this))), ...); 
+            builder << ")";
+            return builder.str();
+        }
+    };
+
+
+    // here we choose to use the first visitor class
     virtual std::any accept(Visitor& visitor) = 0;
+    virtual std::any acceptRPN(VisitorRPN&visitor) = 0;
 
     virtual ~Expression() = default;
 };
@@ -51,6 +74,10 @@ public:
     virtual std::any accept(Visitor& visitor) override  final {
         return visitor.visitLiteralExpression(this);
     }
+    virtual std::any acceptRPN(VisitorRPN&visitor){
+        return visitor.visitLiteralExpression(this);
+    }
+    
     virtual ~Literal() = default;
 };
 
@@ -62,6 +89,9 @@ public:
         this->right = exp;
     }
     virtual std::any accept(Visitor& visitor) override final{
+        return visitor.visitUnaryExpression(this);
+    }
+    virtual std::any acceptRPN(VisitorRPN&visitor){
         return visitor.visitUnaryExpression(this);
     }
     virtual ~Unary() final {
@@ -81,6 +111,9 @@ public:
     virtual std::any accept(Visitor&visitor) override final {
         return visitor.visitBinaryExpression(this);
     }
+    virtual std::any acceptRPN(VisitorRPN&visitor){
+        return visitor.visitBinaryExpression(this);
+    }
     virtual ~Binary() final {
         delete left;
         delete right;
@@ -94,6 +127,9 @@ public:
         this->expression = exp;
     }
     virtual std::any accept(Visitor&visitor) override final{
+        return visitor.visitGroupingExpression(this);
+    }
+    virtual std::any acceptRPN(VisitorRPN&visitor){
         return visitor.visitGroupingExpression(this);
     }
     virtual ~Grouping() final {
