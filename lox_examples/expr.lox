@@ -1,1 +1,1 @@
-(123,456,(1)?"Hello wolrd":"zig is cool");
+(1)?5:1

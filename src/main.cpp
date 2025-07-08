@@ -9,6 +9,7 @@ int test(void);
 int main(int argc,char *argv[]){
     if(!TESTING){
         Expression::Visitor v;
+        Expression::VisitorRPN vr;
         Lexer l = Lexer(read_file("lox_examples/expr.lox"));
         l.scanSource();
         for(Token&t:l.tokens){
@@ -16,7 +17,12 @@ int main(int argc,char *argv[]){
         }
         parser p = parser(l.tokens);
         Expression* expr = p.parse();
-        std::cout << v.astprinter(expr) << '\n';
+        std::string ast_str = vr.astprinter(expr);
+        try{
+            std::cout << Expression::VisitorRPN::evaluator(ast_str) << '\n';
+        }catch(const char*str){
+            std::cout << str << '\n';
+        }
 
         delete expr;
         return 0;

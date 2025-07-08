@@ -97,6 +97,13 @@ Expression* parser::comparison(){
     return left.release();
 }
 Expression* parser::term(){
+    if(this->match(TokenType::PLUS)){
+        Token e = this->peek();
+        std::string err_msg = "Missing left hand side of binary operation.";
+        Logger::error(e.line,e.col,err_msg);
+        this->synchronize();
+        return this->expression();
+    }
     std::unique_ptr<Expression> left(this->factor());
     while(this->match(
         TokenType::MINUS,
@@ -109,6 +116,13 @@ Expression* parser::term(){
     return left.release();
 }
 Expression* parser::factor(){
+    if(this->match(TokenType::SLASH,TokenType::STAR)){
+        Token e = this->peek();
+        std::string err_msg = "Missing left hand side of binary operation.";
+        Logger::error(e.line,e.col,err_msg);
+        this->synchronize();
+        return this->expression();
+    }
     std::unique_ptr<Expression>left(this->unary());
     while(this->match(
         TokenType::STAR,
