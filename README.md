@@ -20,6 +20,10 @@ Next steps will include:
 
 - [x] **Lexer (Scanner)** — Converts source code into tokens, handling keywords, literals, operators, and more.
 
+## Additional features
+- [ ] bitwise operations.
+- [ ] display of faulty line of code.
+
 ## 📁 Project Structure
 ```
 ├── include

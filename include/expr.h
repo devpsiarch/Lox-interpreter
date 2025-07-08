@@ -19,10 +19,10 @@ public:
 
     class Visitor {
     public:
-        std::any visitLiteralExpression(Literal*lit);
-        std::any visitUnaryExpression(Unary*una);
-        std::any visitBinaryExpression(Binary*bin);
-        std::any visitGroupingExpression(Grouping*gro);
+        virtual std::any visitLiteralExpression(Literal*lit);
+        virtual std::any visitUnaryExpression(Unary*una);
+        virtual std::any visitBinaryExpression(Binary*bin);
+        virtual std::any visitGroupingExpression(Grouping*gro);
 
         std::string astprinter(Expression*exp) {
             return stdany_to_string(exp->accept(*this));

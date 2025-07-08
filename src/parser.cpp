@@ -67,6 +67,9 @@ Expression* parser::conditional(){
             std::string err_msg = e.what();
             Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
         }
+        // NOTE: from my current understanding , ternary opertors are determined 
+        // at compile time, therefor at this stage , we should detemine what to return 
+        // based on left either middle or right using an evaluator
         return middle.release();
     }else{
         return left.release();
@@ -157,6 +160,8 @@ Expression* parser::primary(){
             if(this->check(TokenType::COMMA)){
                 while(!this->check(TokenType::RIGHT_PAREN)){
                     this->consume(TokenType::COMMA,"Missing \',\' in comma expression.");
+                    // NOTE: we are supposed to evaluate the the expressions in the 
+                    // comma expression , and only return the most right one
                     expr.reset(this->expression());
                 }
             }

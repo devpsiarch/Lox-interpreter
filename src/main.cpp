@@ -5,11 +5,15 @@
 
 #define TESTING 0
 int test(void);
+void runPrompt();
 
 int main(int argc,char *argv[]){
+    runPrompt();
+    return 0;
     if(!TESTING){
         Expression::Visitor v;
         Expression::VisitorRPN vr;
+        (void)vr;
         Lexer l = Lexer(read_file("lox_examples/expr.lox"));
         l.scanSource();
         for(Token&t:l.tokens){
@@ -17,25 +21,15 @@ int main(int argc,char *argv[]){
         }
         parser p = parser(l.tokens);
         Expression* expr = p.parse();
-        std::string ast_str = vr.astprinter(expr);
-        try{
-            std::cout << Expression::VisitorRPN::evaluator(ast_str) << '\n';
-        }catch(const char*str){
-            std::cout << str << '\n';
-        }
+        std::string ast_str = v.astprinter(expr);
+        std::cout << ast_str << '\n';
+        // try{
+        //     std::cout << Expression::VisitorRPN::evaluator(ast_str) << '\n';
+        // }catch(const char*str){
+        //     std::cout << str << '\n';
+        // }
 
         delete expr;
-        return 0;
-        if(argc > 2 ){
-            std::cout << "usage: ./main <script.lox>\n";
-            return 1;
-        }else if(argc == 2){
-            // run in interactive mode
-            runFile(argv[1]);
-        }else if(argc == 1){
-            // interprite the source code
-            runPrompt();
-        }
         return 0;
     }else{
         test();
@@ -43,6 +37,30 @@ int main(int argc,char *argv[]){
     }
 }
 
+
+void runPrompt(){
+    std::string line;
+    Expression::Visitor v;
+    Lexer l;
+    std::string ast_str;
+    bool shouldclose = false;
+    while(!shouldclose){
+        // interpritation here
+        std::cout << "=> ";
+        std::getline(std::cin,line);
+        if(line == "exit"){
+            shouldclose = true;
+            continue;
+        }
+        l = Lexer(line);
+        l.scanSource();
+        parser p = parser(l.tokens);
+        Expression* expr = p.parse();
+        ast_str = v.astprinter(expr);
+        std::cout << ast_str << '\n';
+        delete expr;
+    }
+}
 
 int test(void){
     Expression::Visitor v;

@@ -1,4 +1,8 @@
 #include "../include/tool/tool.h"
+#include "../include/expr.h"
+#include "../include/lexer.h"
+#include "../include/parser.h"
+
 
 std::string stdany_to_string(const std::any& a){
     if(!a.has_value()) return "nil";
@@ -34,19 +38,4 @@ std::string read_file(const std::string&filename){
     std::stringstream buffer;
     buffer << file.rdbuf();
     return buffer.str();
-}
-void runFile(const std::string&filename){
-    std::string source_code = read_file(filename);
-    // interpritation here 
-    std::cout << "source code : \n" << source_code << '\n'; 
-}
-void runPrompt(){
-    std::string line;
-    std::cout << "=> ";
-    std::getline(std::cin,line);
-    while(line != "END"){
-        // interpritation here
-        std::cout << "line code : \n" << line << '\n';
-        std::getline(std::cin,line);
-    }
 }
