@@ -3,6 +3,23 @@
 #include "../include/lexer.h"
 #include "../include/parser.h"
 
+std::string type_to_string(const std::type_info& t){
+    if (t == typeid(double)) {
+        return "Number";
+    }
+    else if (t == typeid(bool)) {
+        return "Bool"; 
+    }
+    else if (t == typeid(std::string)) {
+        return "String";
+    }
+    else if (t == typeid(std::nullptr_t)) {
+        return "nil";
+    }
+    else {
+        return "nil";
+    }
+}
 
 std::string stdany_to_string(const std::any& a){
     if(!a.has_value()) return "nil";
