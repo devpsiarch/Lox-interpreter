@@ -8,15 +8,13 @@ private:
     virtual std::any visitBinaryExpression(Binary*bin) override;
     virtual std::any visitGroupingExpression(Grouping*gro) override;
 
-    bool isTruthy(std::any obj);
     bool isEqual(std::any obj1,std::any obj2); 
     
-    bool checkType(std::type_info&expected,std::any obj1,std::any obj2);
+    bool checkType(const std::type_info&expected,std::any obj1,std::any obj2);
 
-    void assertTypeBinary(std::type_info&expected,std::any obj1,std::any obj2,Token op);
-    void assertTypeUnary(std::type_info&expected,std::any obj,Token op);
+    void assertTypeBinary(const std::type_info&expected,std::any obj1,std::any obj2,Token op);
+    void assertTypeUnary(const std::type_info&expected,std::any obj,Token op);
         
-    std::any evaluate(Expression* expr);
 
 
     class RunTimeError : public std::exception {
@@ -32,6 +30,10 @@ private:
         }
     };
 
+public:
+    void Interpret(Expression* expr);
+    static bool isTruthy(std::any obj);
+    std::any evaluate(Expression* expr);
 };
 
 bool operator==(std::any obj1,std::any obj2);

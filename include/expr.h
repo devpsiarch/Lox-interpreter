@@ -141,7 +141,7 @@ public:
     Expression* left;
     Expression* right;
     Token op;
-    explicit Binary(Token op,Expression*r,Expression*l) : op(op){
+    explicit Binary(Token op,Expression*l,Expression*r) : op(op){
         this->left = l;
         this->right = r;
     }

@@ -2,6 +2,7 @@
 #include "../include/lexer.h"
 #include "../include/expr.h"
 #include "../include/parser.h"
+#include "../include/interpreter.h"
 
 #define TESTING 0
 int test(void);
@@ -42,6 +43,7 @@ void runPrompt(){
     std::string line;
     Expression::Visitor v;
     Lexer l;
+    Interpreter inter;
     std::string ast_str;
     bool shouldclose = false;
     while(!shouldclose){
@@ -51,13 +53,20 @@ void runPrompt(){
         if(line == "exit"){
             shouldclose = true;
             continue;
+        }else if(line == "clear"){
+            system("clear");
+            continue;
         }
         l = Lexer(line);
         l.scanSource();
         parser p = parser(l.tokens);
         Expression* expr = p.parse();
+        if(expr == nullptr) continue;           
+        inter.Interpret(expr);
+
         ast_str = v.astprinter(expr);
-        std::cout << ast_str << '\n';
+        //std::cout << ast_str << '\n';
+        
         delete expr;
     }
 }

@@ -8,7 +8,7 @@
 
         expression     → conditional;
 
-        conditional    → equality ( "?" expression ":" conditional )? ;
+        conditional    → equality ( "?" expression ":" expression )? ;
 
         equality       → comparison ( ( "!=" | "==" ) comparison )* ;
         comparison     → term       ( ( ">"  | ">=" ) term       )* ;

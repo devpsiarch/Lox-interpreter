@@ -1,6 +1,6 @@
 # Lox Interpreter
 
-This is my implementation of the Lox programming language in C++.
+My implementation of the lox interpreter in C++.
 
 The goal of this project is to build a full interpreter for the Lox language from scratch, learning how programming languages work under the hood in the process.
 
@@ -8,34 +8,22 @@ The goal of this project is to build a full interpreter for the Lox language fro
 
 > **In Progress**
 
-Currently, I’ve completed the **lexer (scanner)**, which is responsible for turning raw source code into a stream of tokens.
+Currently, the interpreter supports:
+- Lexing (scanning) the source code into tokens
+- Parsing arithmetic expressions into an AST
+- Evaluating arithmetic expressions at runtime
 
 Next steps will include:
-- Parser
-- AST generation
-- Interpreter
-- (and possibly later) a bytecode VM
+- Adding support for grouping, comparison, and equality operators
+- Implementing variables and environments
+- Supporting control flow (`if`, `while`, etc.)
+- Function definitions and calls
 
 ## 🔧 What’s Implemented
 
-- [x] **Lexer (Scanner)** — Converts source code into tokens, handling keywords, literals, operators, and more.
-
-## Additional features
-- [ ] bitwise operations.
-- [ ] display of faulty line of code.
-
-## 📁 Project Structure
-```
-├── include
-│ └── lexer.h
-├── lox_examples
-│ ├── main.lox
-│ └── test.lox
-├── Makefile
-└── src
-├── lexer.cpp
-└── main.cpp
-```
+- [x] **Lexer (Scanner)** — Converts source code into tokens
+- [x] **Parser** — Converts tokens into an abstract syntax tree (AST)
+- [x] **Interpreter** — Evaluates arithmetic expressions like `1 + 2 * (3 - 4)`  
 
 ## 🧠 Motivation
 
@@ -48,7 +36,5 @@ I'm building this interpreter to deeply understand how programming languages wor
 ## ✍️ Author
 
 Made with ❤️ by devpsiarch
-
 ---
-
 Feel free to follow this project or fork it if you’re also learning from the book!

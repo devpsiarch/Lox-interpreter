@@ -1,4 +1,5 @@
 #include "../include/parser.h"
+#include "../include/interpreter.h"
 
 parser::parser(const std::vector<Token>&toks){
     this->current = 0;
@@ -61,7 +62,7 @@ Expression* parser::conditional(){
         std::unique_ptr<Expression> right;
         try{
             this->consume(TokenType::COLEN,"Missing \':\' from ternary expression.");
-            right.reset(this->conditional());
+            right.reset(this->expression());
             // now we evalute
         }catch(const parserError&e){
             std::string err_msg = e.what();
@@ -70,7 +71,15 @@ Expression* parser::conditional(){
         // NOTE: from my current understanding , ternary opertors are determined 
         // at compile time, therefor at this stage , we should detemine what to return 
         // based on left either middle or right using an evaluator
-        return middle.release();
+        Interpreter temp_eval = Interpreter();
+        Expression* condition = left.release();
+        std::any condition_value = temp_eval.evaluate(condition);
+        delete condition;
+        if(Interpreter::isTruthy(condition_value)){
+            return middle.release();
+        }else{
+            return right.release();
+        }
     }else{
         return left.release();
     }

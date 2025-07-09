@@ -4,7 +4,6 @@
 void Logger::report(int line,int col,std::string&where,std::string&msg){
     std::cout << "[line" << line << ':' << col << "] Error " << where << ": "
         << msg << '\n';
-    exit(0);
 }
 void Logger::error(int line,int col,std::string&msg){
     std::string s = "";
