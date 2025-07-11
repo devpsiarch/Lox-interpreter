@@ -1,11 +1,21 @@
 #pragma once
 #include "./lexer.h"
 #include "./expr.h"
+#include "./statement.h"
 #include <exception>
 #include <memory>
+#include <vector>
 // we define the complete grammer for the language as follows 
 /*  
 
+        program        → statement* EOFF ;
+
+        statement      → exprStmt | printStmt ;
+
+        exprStmt       → expression ';' ;
+
+        printStmt      → "print" expression ";" ;
+     
         expression     → conditional;
 
         conditional    → equality ( "?" expression ":" expression )? ;
@@ -69,8 +79,14 @@ private:
     Expression* unary();
     Expression* primary();
 
+    Statement* statement();
+    Statement* print_statement();
+    Statement* expression_statement();
+
     void synchronize(void); // when encourtering a syntax error , we are suppoed to skip 
                             // ahead then contiue parsing to detect as many erros as possible
                             // well use it later ...
-    public: Expression* parse();
+public:
+    Expression* parse();
+    std::vector<Statement*> parserProgram();
 };

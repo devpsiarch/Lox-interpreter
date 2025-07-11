@@ -1,12 +1,16 @@
 #pragma once
 #include "./expr.h"
+#include "./statement.h"
 
-class Interpreter : public Expression::Visitor {
+class Interpreter : public Expression::Visitor , public Statement::Visitor {
 private:
     virtual std::any visitLiteralExpression(Literal*lit) override;
     virtual std::any visitUnaryExpression(Unary*una) override;
     virtual std::any visitBinaryExpression(Binary*bin) override;
     virtual std::any visitGroupingExpression(Grouping*gro) override;
+
+    virtual std::any visitExpressionStatement(ExpressionStatement* estmt) override;
+    virtual std::any visitPrintStatement(PrintStatement* pstmt) override;
 
     bool isEqual(std::any obj1,std::any obj2); 
     
@@ -29,11 +33,13 @@ private:
             return msg.c_str();
         }
     };
-
+    
 public:
     void Interpret(Expression* expr);
+    void InterpretProgram(std::vector<Statement*>& stmt);
     static bool isTruthy(std::any obj);
     std::any evaluate(Expression* expr);
+    void execute(Statement* st);
 };
 
 bool operator==(std::any obj1,std::any obj2);

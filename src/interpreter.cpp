@@ -181,11 +181,38 @@ std::any Interpreter::visitGroupingExpression(Grouping*gro) {
     return this->evaluate(gro->expression);
 }
 
+std::any Interpreter::visitExpressionStatement(ExpressionStatement* estmt){
+    std::any value = this->evaluate(estmt->expr);
+    return nullptr;
+} 
+std::any Interpreter::visitPrintStatement(PrintStatement* pstmt){
+    std::any value = this->evaluate(pstmt->expr);
+    std::cout << stdany_to_string(value) << '\n';
+    return nullptr;   
+}
+
 
 void Interpreter::Interpret(Expression* expr){
     try {
         std::any result = this->evaluate(expr);
         std::cout << stdany_to_string(result) << '\n' << "ended interpretation.\n";
+    }catch(const RunTimeError&e){
+        std::string err_msg = e.what();
+        Logger::error(e.faulty_op.line,e.faulty_op.col,err_msg);
+    }
+}
+
+void Interpreter::execute(Statement* st){
+    st->accept(*this);
+}
+
+
+void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
+    try {
+        for(Statement* st:stmt){
+            this->execute(st);
+            delete st;
+        } 
     }catch(const RunTimeError&e){
         std::string err_msg = e.what();
         Logger::error(e.faulty_op.line,e.faulty_op.col,err_msg);

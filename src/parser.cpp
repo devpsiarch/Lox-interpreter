@@ -185,6 +185,22 @@ Expression* parser::primary(){
     throw parserError(this->peek(),"expected expression.");
 }
 
+Statement* parser::statement(){
+    if(this->match(TokenType::PRINT)) return print_statement();
+    return expression_statement();
+}
+
+Statement* parser::print_statement(){
+    Expression* expr = this->expression();
+    this->consume(TokenType::SEMICOLEN,"Expected \';\' after print statement.");
+    return new PrintStatement(expr);
+}
+Statement* parser::expression_statement(){
+    Expression* expr = this->expression();
+    this->consume(TokenType::SEMICOLEN,"Expected \';\' after value of expression.");
+    return new ExpressionStatement(expr);
+}
+
 void parser::synchronize(void){
     advance();
     while(!this->isAtEnd()){
@@ -214,4 +230,18 @@ Expression* parser::parse(){
         Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
         return nullptr;
     }
+}
+
+std::vector<Statement*> parser::parserProgram(){
+    std::vector<Statement*> stmts;
+    try {
+        while(!this->isAtEnd()){
+            stmts.push_back(this->statement());
+        }
+    }catch(const parserError&e){
+        std::string err_msg = e.what();
+        Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
+    }
+    // returns empty if failed , maybe ill change this to return a pointer to a vector instead
+    return stmts;
 }

@@ -7,30 +7,20 @@
 #define TESTING 0
 int test(void);
 void runPrompt();
+void runFile();
 
 int main(int argc,char *argv[]){
-    runPrompt();
-    return 0;
     if(!TESTING){
         Expression::Visitor v;
         Expression::VisitorRPN vr;
         (void)vr;
         Lexer l = Lexer(read_file("lox_examples/expr.lox"));
         l.scanSource();
-        for(Token&t:l.tokens){
-            std::cout << t.toString() << '\n';
-        }
         parser p = parser(l.tokens);
-        Expression* expr = p.parse();
-        std::string ast_str = v.astprinter(expr);
-        std::cout << ast_str << '\n';
-        // try{
-        //     std::cout << Expression::VisitorRPN::evaluator(ast_str) << '\n';
-        // }catch(const char*str){
-        //     std::cout << str << '\n';
-        // }
+        std::vector<Statement*> stmnt =  p.parserProgram();
+        Interpreter inter;
+        inter.InterpretProgram(stmnt);
 
-        delete expr;
         return 0;
     }else{
         test();
@@ -39,12 +29,31 @@ int main(int argc,char *argv[]){
 }
 
 
+void eval_expr(const std::string&line){
+    Lexer l = Lexer(line);
+    l.scanSource();
+    parser p = parser(l.tokens);
+    Expression* expr = p.parse();
+    if(expr == nullptr) return ;           
+    Expression::Visitor v;
+    Interpreter inter;
+    inter.Interpret(expr);
+    std::string ast_str = v.astprinter(expr);
+    std::cout << ast_str << '\n';
+    delete expr;
+}
+
+void run_line(const std::string&line){
+    Lexer l = Lexer(line);
+    l.scanSource();
+    parser p = parser(l.tokens);
+    std::vector<Statement*> stmts = p.parserProgram();
+    Interpreter inter;
+    inter.InterpretProgram(stmts);
+}
+
 void runPrompt(){
     std::string line;
-    Expression::Visitor v;
-    Lexer l;
-    Interpreter inter;
-    std::string ast_str;
     bool shouldclose = false;
     while(!shouldclose){
         // interpritation here
@@ -57,17 +66,8 @@ void runPrompt(){
             system("clear");
             continue;
         }
-        l = Lexer(line);
-        l.scanSource();
-        parser p = parser(l.tokens);
-        Expression* expr = p.parse();
-        if(expr == nullptr) continue;           
-        inter.Interpret(expr);
-
-        ast_str = v.astprinter(expr);
-        //std::cout << ast_str << '\n';
-        
-        delete expr;
+        //eval_expr(line);
+        run_line(line);
     }
 }
 
