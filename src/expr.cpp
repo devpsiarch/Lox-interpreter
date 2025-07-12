@@ -17,6 +17,11 @@ std::any Expression::Visitor::visitVariableExpression(Variable*var){
     (void)var;
     return "declaration"; 
 }
+std::any Expression::Visitor::visitAssignExpression(Assign*ass){
+    (void)ass;
+    return "assignement"; 
+}
+
 std::any Expression::VisitorRPN::visitLiteralExpression(Literal*lit){
     if(!lit->value.has_value()) return "nil";
     return stdany_to_string(lit->value);

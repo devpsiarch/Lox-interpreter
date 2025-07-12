@@ -13,6 +13,7 @@ class Unary;
 class Binary;
 class Variable;
 class Grouping;
+class Assign;
 
 class Expression {
 public:
@@ -25,6 +26,7 @@ public:
         virtual std::any visitBinaryExpression(Binary*bin);
         virtual std::any visitGroupingExpression(Grouping*gro);
         virtual std::any visitVariableExpression(Variable*var);
+        virtual std::any visitAssignExpression(Assign*ass);
         
 
         std::string astprinter(Expression*exp) {
@@ -189,4 +191,23 @@ public:
         return nullptr;
     }
     virtual ~Variable() final  = default;
+};
+
+class Assign : public Expression {
+public:
+    Token op;
+    Expression* expr;
+    explicit Assign(Token op,Expression* expr) : op(op) {
+        this->expr = expr;
+    }
+    virtual std::any accept(Visitor&visitor) override final{
+        return visitor.visitAssignExpression(this);
+    }
+    virtual std::any acceptRPN(VisitorRPN&visitor){
+        (void)visitor;
+        return nullptr;
+    }
+    virtual ~Assign() final {
+        delete expr;
+    }
 };

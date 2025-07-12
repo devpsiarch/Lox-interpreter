@@ -18,7 +18,9 @@
 
         printStmt      → "print" expression ";" ;
      
-        expression     → conditional;
+        expression     → assignement;
+
+        assignement    →  IDENTIFIER "=" assignement | conditional ;
 
         conditional    → equality ( "?" expression ":" expression )? ;
 
@@ -80,6 +82,7 @@ private:
     Expression* factor();
     Expression* unary();
     Expression* primary();
+    Expression* assignement();
 
     Statement* statement();
     Statement* declaration();

@@ -6,6 +6,7 @@ void environment::define(const std::string&key,std::any value){
 void environment::assign(const std::string&key,std::any value){
     if(this->isKeyIn(key)){
         this->define(key,value);
+        return;
     }
     std::string reason = "Variable \'" + key + "\' not defined , it cant be assigned.";
     throw NameError(reason.c_str());

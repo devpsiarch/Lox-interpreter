@@ -13,6 +13,7 @@ private:
     virtual std::any visitBinaryExpression(Binary*bin) override;
     virtual std::any visitGroupingExpression(Grouping*gro) override;
     virtual std::any visitVariableExpression(Variable*var) override;
+    virtual std::any visitAssignExpression(Assign*ass) override;
 
     virtual std::any visitExpressionStatement(ExpressionStatement* estmt) override;
     virtual std::any visitPrintStatement(PrintStatement* pstmt) override;

@@ -189,6 +189,18 @@ std::any Interpreter::visitVariableExpression(Variable*var){
     }
 }
 
+
+std::any Interpreter::visitAssignExpression(Assign*ass){
+    try {
+        std::any value = this->evaluate(ass->expr);
+        this->env->assign(ass->op.lexeme,value);
+        return value;
+    }catch(const environment::NameError&e){
+        throw RunTimeError(ass->op,e.what()); 
+    }
+
+}
+
 std::any Interpreter::visitExpressionStatement(ExpressionStatement* estmt){
     std::any value = this->evaluate(estmt->expr);
     return nullptr;

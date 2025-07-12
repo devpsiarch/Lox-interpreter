@@ -53,8 +53,28 @@ Token parser::consume(TokenType type,const char*msg){
  * the exception.*/
 
 Expression* parser::expression(){
-    return this->conditional();
+    return this->assignement();
 }
+
+Expression* parser::assignement(){
+    std::unique_ptr<Expression> lv(this->conditional());
+    if(this->match(TokenType::EQUAL)){
+        Token op = this->previous();
+        std::unique_ptr<Expression> rv(this->assignement());
+        // if the lv value is a variable aka a assinable entity 
+        // we continue the assignement
+        Variable* down = dynamic_cast<Variable*>(lv.get());
+        if(down != nullptr){
+            Token name = down->name; 
+            return new Assign(name,rv.release());
+        }
+        // else we cant bind lvalue to lvalue
+        std::string err_msg = "SyntaxError: Can't bind lvalue to lvalue , maybe you meant \'==\'?";
+        Logger::error(op.line,op.col,err_msg);
+    }
+    return lv.release();
+}
+
 Expression* parser::conditional(){
     std::unique_ptr<Expression> left(this->equality());
     if(this->match(TokenType::TERNARY)){
