@@ -5,6 +5,7 @@
 class ExpressionStatement;
 class PrintStatement;
 class DeclareStatement;
+class BlockStatement;
 
 class Statement {
 public:
@@ -13,6 +14,7 @@ public:
         virtual std::any visitExpressionStatement(ExpressionStatement* estmt);
         virtual std::any visitPrintStatement(PrintStatement* pstmt);
         virtual std::any visitDeclareStatement(DeclareStatement* dstmt);
+        virtual std::any visitBlockStatement(BlockStatement* bstmt);
     };
     virtual std::any accept(Visitor& visitor) = 0;
     virtual ~Statement() = default;
@@ -59,5 +61,19 @@ public:
     }
     virtual ~DeclareStatement() {
         delete this->init;
+    }
+};
+
+class BlockStatement : public Statement {
+public:
+    std::vector<Statement*> stmts;
+    BlockStatement(std::vector<Statement*>&stmnts) : stmts(stmnts){}
+    virtual std::any accept(Visitor& visitor) override final {
+        return visitor.visitBlockStatement(this);
+    }
+    virtual ~BlockStatement() {
+        for(Statement* st:this->stmts){
+            delete st;
+        } 
     }
 };

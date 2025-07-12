@@ -3,14 +3,27 @@
 #include <string>
 #include <any>
 #include <exception>
+#include <memory>
 
 class environment {
 private:
     std::map<std::string,std::any> SymbolTable;
+    std::unique_ptr<environment> closing;
 public:
     environment() = default;
-    environment& operator=(environment*other){
-        SymbolTable = other->SymbolTable;
+    environment(environment&other) : 
+        SymbolTable(other.SymbolTable) , 
+        closing(other.closing ? std::make_unique<environment>(*other.closing) : nullptr)
+    {}
+    environment& operator=(environment&other){
+        if(&other != this){
+            this->SymbolTable = other.SymbolTable;
+            if(other.closing)
+                this->closing = std::make_unique<environment>(*other.closing);
+            else {
+                closing.reset();
+            }
+        }
         return *this;
     }
     ~environment() = default;

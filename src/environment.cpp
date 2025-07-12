@@ -8,13 +8,18 @@ void environment::assign(const std::string&key,std::any value){
         this->define(key,value);
         return;
     }
+    if(this->closing != nullptr){
+        this->closing->assign(key,value);
+        return;
+    }
     std::string reason = "Variable \'" + key + "\' not defined , it cant be assigned.";
     throw NameError(reason.c_str());
 }
 std::any environment::get(const std::string&key){
     if(this->isKeyIn(key)){
         return this->SymbolTable[key];
-    } 
+    }
+    if(this->closing != nullptr) return this->closing->get(key);
     std::string reason = "Variable \'" + key + "\' not defined.";
     throw NameError(reason.c_str());
 }

@@ -208,6 +208,10 @@ Expression* parser::primary(){
 
 Statement* parser::statement(){
     if(this->match(TokenType::PRINT)) return print_statement();
+    if(this->match(TokenType::LEFT_BRACE)){
+        std::vector<Statement*> result = block_statement();
+        return new BlockStatement(result);
+    }
     return expression_statement();
 }
 
@@ -244,6 +248,16 @@ Statement* parser::declare_statement(){
     this->consume(TokenType::SEMICOLEN,"Expected \';\' after variable declaration.");
     return new DeclareStatement(name,value.release());
 }
+
+std::vector<Statement*> parser::block_statement(){
+    std::vector<Statement*> result;
+    while(!this->isAtEnd() && !this->check(TokenType::RIGHT_BRACE)){
+        result.push_back(this->declaration());
+    }
+    this->consume(TokenType::RIGHT_BRACE,"Expected \'}\' at end of a block.");
+    return result;
+}
+
 
 void parser::synchronize(void){
     while(!this->isAtEnd()){

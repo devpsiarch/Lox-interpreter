@@ -222,7 +222,28 @@ std::any Interpreter::visitDeclareStatement(DeclareStatement* dstmt){
     }catch(const environment::NameError&e){
        throw RunTimeError(dstmt->name,e.what());
     }
+}
 
+void Interpreter::executeBlock(std::vector<Statement*>&stmts,environment&env){
+    environment saved = *this->env;
+    try {
+        *this->env = env;
+        for(Statement* st:stmts){
+            this->execute(st);
+        }
+    }catch(const RunTimeError&e){
+        // in case of a error
+        *this->env = saved;
+        std::string err_msg = e.what();
+        Logger::error(e.faulty_op.line,e.faulty_op.col,err_msg);
+    }
+    *this->env = saved;
+}
+
+std::any Interpreter::visitBlockStatement(BlockStatement* bstmt){
+    environment copy = *this->env;
+    this->executeBlock(bstmt->stmts,copy);
+    return nullptr;
 }
 
 void Interpreter::Interpret(Expression* expr){
@@ -254,6 +275,9 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
             delete st; 
         }
     }catch(const RunTimeError&e){
+        for(Statement* st:stmt){
+            delete st; 
+        }
         std::string err_msg = e.what();
         Logger::error(e.faulty_op.line,e.faulty_op.col,err_msg);
     }

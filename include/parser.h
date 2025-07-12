@@ -12,7 +12,9 @@
 
         declaration    → varDeclare | statement ;
     
-        statement      → exprStmt | printStmt ;
+        statement      → exprStmt | printStmt | block;
+
+        blockstatement → '{' declaration* '}' ;
 
         exprStmt       → expression ';' ;
 
@@ -90,6 +92,7 @@ private:
     Statement* print_statement();
     Statement* expression_statement();
     Statement* declare_statement();
+    std::vector<Statement*> block_statement();
 
     void synchronize(void); // when encourtering a syntax error , we are suppoed to skip 
                             // ahead then contiue parsing to detect as many erros as possible

@@ -16,3 +16,8 @@ std::any Statement::Visitor::visitDeclareStatement(DeclareStatement* dstmt){
     (void)dstmt;
     return nullptr;
 }
+
+std::any Statement::Visitor::visitBlockStatement(BlockStatement* bstmt){
+    (void)bstmt;
+    return nullptr;
+}
