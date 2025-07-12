@@ -163,6 +163,7 @@ Expression* parser::primary(){
     if(this->match(TokenType::NIL)) return new Literal(nullptr);
     if(this->match(TokenType::STRING,TokenType::NUMBER))
         return new Literal(previous().literal);
+    if(this->match(TokenType::IDENTIFIER)) return new Variable(this->previous());
     if(this->match(TokenType::LEFT_PAREN)){
         std::unique_ptr<Expression> expr (this->expression());
         try {
@@ -190,20 +191,43 @@ Statement* parser::statement(){
     return expression_statement();
 }
 
+Statement* parser::declaration(){
+    try {
+        if(this->match(TokenType::VAR)) return declare_statement();
+        return statement();
+    }catch(const parserError&e){
+        std::string err_msg = e.what();
+        Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
+        this->synchronize();
+        return nullptr;
+    }
+
+}
+
 Statement* parser::print_statement(){
-    Expression* expr = this->expression();
+    std::unique_ptr<Expression> expr(this->expression());
     this->consume(TokenType::SEMICOLEN,"Expected \';\' after print statement.");
-    return new PrintStatement(expr);
+    return new PrintStatement(expr.release());
 }
 Statement* parser::expression_statement(){
-    Expression* expr = this->expression();
+    std::unique_ptr<Expression>expr(this->expression());
     this->consume(TokenType::SEMICOLEN,"Expected \';\' after value of expression.");
-    return new ExpressionStatement(expr);
+    return new ExpressionStatement(expr.release());
+}
+
+Statement* parser::declare_statement(){
+    Token name = consume(TokenType::IDENTIFIER,"Expected variable name after declaration.");
+    std::unique_ptr<Expression> value;
+    if(this->match(TokenType::EQUAL)){
+        value.reset(this->expression()); 
+    }
+    this->consume(TokenType::SEMICOLEN,"Expected \';\' after variable declaration.");
+    return new DeclareStatement(name,value.release());
 }
 
 void parser::synchronize(void){
-    advance();
     while(!this->isAtEnd()){
+        this->advance();
         if(previous().type == TokenType::SEMICOLEN) return;
         switch (peek().type) {
             case CLASS:
@@ -236,7 +260,7 @@ std::vector<Statement*> parser::parserProgram(){
     std::vector<Statement*> stmts;
     try {
         while(!this->isAtEnd()){
-            stmts.push_back(this->statement());
+            stmts.push_back(this->declaration());
         }
     }catch(const parserError&e){
         std::string err_msg = e.what();

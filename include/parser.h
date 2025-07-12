@@ -8,8 +8,10 @@
 // we define the complete grammer for the language as follows 
 /*  
 
-        program        → statement* EOFF ;
+        program        → declaration* EOFF ;
 
+        declaration    → varDeclare | statement ;
+    
         statement      → exprStmt | printStmt ;
 
         exprStmt       → expression ';' ;
@@ -26,7 +28,7 @@
         factor         → unary      ( ( "/"  | "*"  ) unary      )* ;
         unary          → ( "!" | "-" ) unary
                         | primary ;
-        primary        → NUMBER | STRING | "true" | "false" | "nil"
+        primary        → NUMBER | STRING | "true" | "false" | "nil" | IDENTIFIER
                         | "(" expression ( "," expression )* ")" ;
 
 
@@ -80,8 +82,11 @@ private:
     Expression* primary();
 
     Statement* statement();
+    Statement* declaration();
+
     Statement* print_statement();
     Statement* expression_statement();
+    Statement* declare_statement();
 
     void synchronize(void); // when encourtering a syntax error , we are suppoed to skip 
                             // ahead then contiue parsing to detect as many erros as possible

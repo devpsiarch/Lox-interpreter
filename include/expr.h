@@ -11,6 +11,7 @@
 class Literal;
 class Unary;
 class Binary;
+class Variable;
 class Grouping;
 
 class Expression {
@@ -23,6 +24,8 @@ public:
         virtual std::any visitUnaryExpression(Unary*una);
         virtual std::any visitBinaryExpression(Binary*bin);
         virtual std::any visitGroupingExpression(Grouping*gro);
+        virtual std::any visitVariableExpression(Variable*var);
+        
 
         std::string astprinter(Expression*exp) {
             return stdany_to_string(exp->accept(*this));
@@ -172,4 +175,18 @@ public:
     virtual ~Grouping() final {
         delete expression;
     }
+};
+
+class Variable : public Expression {
+public:
+    Token name;
+    explicit Variable(Token name) : name(name){}
+    virtual std::any accept(Visitor&visitor) override final{
+        return visitor.visitVariableExpression(this);
+    }
+    virtual std::any acceptRPN(VisitorRPN&visitor){
+        (void)visitor;
+        return nullptr;
+    }
+    virtual ~Variable() final  = default;
 };

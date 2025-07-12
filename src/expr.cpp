@@ -13,7 +13,10 @@ std::any Expression::Visitor::visitBinaryExpression(Binary*bin){
 std::any Expression::Visitor::visitGroupingExpression(Grouping*gro){
    return this->parenthensize("group",gro->expression); 
 }
-
+std::any Expression::Visitor::visitVariableExpression(Variable*var){
+    (void)var;
+    return "declaration"; 
+}
 std::any Expression::VisitorRPN::visitLiteralExpression(Literal*lit){
     if(!lit->value.has_value()) return "nil";
     return stdany_to_string(lit->value);

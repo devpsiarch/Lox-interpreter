@@ -1,5 +1,4 @@
 #include "../include/interpreter.h"
-
 /* stopped at handling the checking for types when evaluating*/
 
 
@@ -181,6 +180,15 @@ std::any Interpreter::visitGroupingExpression(Grouping*gro) {
     return this->evaluate(gro->expression);
 }
 
+
+std::any Interpreter::visitVariableExpression(Variable*var){
+    try {
+        return this->env->get(var->name.lexeme);
+    }catch(const environment::NameError&e){
+        throw RunTimeError(var->name,e.what()); 
+    }
+}
+
 std::any Interpreter::visitExpressionStatement(ExpressionStatement* estmt){
     std::any value = this->evaluate(estmt->expr);
     return nullptr;
@@ -191,6 +199,19 @@ std::any Interpreter::visitPrintStatement(PrintStatement* pstmt){
     return nullptr;   
 }
 
+std::any Interpreter::visitDeclareStatement(DeclareStatement* dstmt){
+    try {
+        std::any value = nullptr;
+        if(dstmt->init != nullptr){
+            value = this->evaluate(dstmt->init);
+        }
+        this->env->define(dstmt->name.lexeme,value);
+        return nullptr;
+    }catch(const environment::NameError&e){
+       throw RunTimeError(dstmt->name,e.what());
+    }
+
+}
 
 void Interpreter::Interpret(Expression* expr){
     try {
@@ -209,10 +230,17 @@ void Interpreter::execute(Statement* st){
 
 void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
     try {
+        // NOTE: for a statement to be nullptr that means that that statement is faulty 
+        // because of any kind of error no matter what kind , in that case a we should stop execution
         for(Statement* st:stmt){
+            if(st == nullptr){
+                break;
+            }
             this->execute(st);
-            delete st;
-        } 
+        }
+        for(Statement* st:stmt){
+            delete st; 
+        }
     }catch(const RunTimeError&e){
         std::string err_msg = e.what();
         Logger::error(e.faulty_op.line,e.faulty_op.col,err_msg);

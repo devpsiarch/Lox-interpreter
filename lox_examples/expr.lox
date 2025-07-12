@@ -1,2 +1,4 @@
 print "hello world";
 print "first lox program";
+var x = "hello";
+print "hello";

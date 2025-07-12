@@ -1,9 +1,10 @@
 #pragma once
 #include "./expr.h"
+#include "./lexer.h"
 
 class ExpressionStatement;
 class PrintStatement;
-
+class DeclareStatement;
 
 class Statement {
 public:
@@ -11,6 +12,7 @@ public:
     public:
         virtual std::any visitExpressionStatement(ExpressionStatement* estmt);
         virtual std::any visitPrintStatement(PrintStatement* pstmt);
+        virtual std::any visitDeclareStatement(DeclareStatement* dstmt);
     };
     virtual std::any accept(Visitor& visitor) = 0;
     virtual ~Statement() = default;
@@ -42,5 +44,20 @@ public:
     }
     virtual ~PrintStatement() {
         delete this->expr;
+    }
+};
+
+class DeclareStatement : public Statement {
+public:
+    Token name;
+    Expression* init; // optional else nullpltr
+    DeclareStatement(Token name,Expression* expr = nullptr) : name(name) {
+        this->init = expr;
+    }
+    virtual std::any accept(Visitor& visitor) override final {
+        return visitor.visitDeclareStatement(this);
+    }
+    virtual ~DeclareStatement() {
+        delete this->init;
     }
 };

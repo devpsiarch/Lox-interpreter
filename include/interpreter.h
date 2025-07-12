@@ -1,17 +1,23 @@
 #pragma once
 #include "./expr.h"
 #include "./statement.h"
+#include "./environment.h"
 
 class Interpreter : public Expression::Visitor , public Statement::Visitor {
 private:
+
+    environment* env;
+
     virtual std::any visitLiteralExpression(Literal*lit) override;
     virtual std::any visitUnaryExpression(Unary*una) override;
     virtual std::any visitBinaryExpression(Binary*bin) override;
     virtual std::any visitGroupingExpression(Grouping*gro) override;
+    virtual std::any visitVariableExpression(Variable*var) override;
 
     virtual std::any visitExpressionStatement(ExpressionStatement* estmt) override;
     virtual std::any visitPrintStatement(PrintStatement* pstmt) override;
-
+    virtual std::any visitDeclareStatement(DeclareStatement* dstmt) override;
+    
     bool isEqual(std::any obj1,std::any obj2); 
     
     bool checkType(const std::type_info&expected,std::any obj1,std::any obj2);
@@ -40,6 +46,13 @@ public:
     static bool isTruthy(std::any obj);
     std::any evaluate(Expression* expr);
     void execute(Statement* st);
+
+    Interpreter(){
+        this->env = new environment();
+    }
+    ~Interpreter(){
+        delete this->env;
+    }
 };
 
 bool operator==(std::any obj1,std::any obj2);

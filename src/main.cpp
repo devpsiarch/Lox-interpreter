@@ -10,6 +10,8 @@ void runPrompt();
 void runFile();
 
 int main(int argc,char *argv[]){
+    runPrompt();
+    return 0;
     if(!TESTING){
         Expression::Visitor v;
         Expression::VisitorRPN vr;
@@ -20,7 +22,6 @@ int main(int argc,char *argv[]){
         std::vector<Statement*> stmnt =  p.parserProgram();
         Interpreter inter;
         inter.InterpretProgram(stmnt);
-
         return 0;
     }else{
         test();
@@ -43,18 +44,18 @@ void eval_expr(const std::string&line){
     delete expr;
 }
 
-void run_line(const std::string&line){
+void run_line(Interpreter&inter,const std::string&line){
     Lexer l = Lexer(line);
     l.scanSource();
     parser p = parser(l.tokens);
     std::vector<Statement*> stmts = p.parserProgram();
-    Interpreter inter;
     inter.InterpretProgram(stmts);
 }
 
 void runPrompt(){
     std::string line;
     bool shouldclose = false;
+    Interpreter inter;
     while(!shouldclose){
         // interpritation here
         std::cout << "=> ";
@@ -67,7 +68,7 @@ void runPrompt(){
             continue;
         }
         //eval_expr(line);
-        run_line(line);
+        run_line(inter,line);
     }
 }
 
