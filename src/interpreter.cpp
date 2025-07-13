@@ -211,6 +211,24 @@ std::any Interpreter::visitConditionalExpression(Conditional*con){
     } 
 }
 
+
+std::any Interpreter::visitLogicalExpression(Logical* lor){
+    try {
+        std::any left = this->evaluate(lor->left);
+        if(lor->op.type == TokenType::OR){
+            // we dont need to evaluate the second
+            if(isTruthy(left)) return left;
+        }else{
+            // for the AND token if the first is false then we dont need
+            // to evaluate the second
+            if(!this->isTruthy(left)) return left;
+        }
+        return evaluate(lor->right);
+    }catch(const environment::NameError&e){
+        throw RunTimeError(lor->op,e.what()); 
+    }    
+}
+
 std::any Interpreter::visitExpressionStatement(ExpressionStatement* estmt){
     std::any value = this->evaluate(estmt->expr);
     if(this->REPL)

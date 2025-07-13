@@ -57,7 +57,7 @@ Expression* parser::expression(){
 }
 
 Expression* parser::assignement(){
-    std::unique_ptr<Expression> lv(this->conditional());
+    std::unique_ptr<Expression> lv(this->logic_or());
     if(this->match(TokenType::EQUAL)){
         Token op = this->previous();
         std::unique_ptr<Expression> rv(this->assignement());
@@ -73,6 +73,27 @@ Expression* parser::assignement(){
         Logger::error(op.line,op.col,err_msg);
     }
     return lv.release();
+}
+
+Expression* parser::logic_or(){
+    std::unique_ptr<Expression> left(this->logic_and());
+    while(this->match(TokenType::OR)){
+        Token op = this->previous();
+        std::unique_ptr<Expression> right(this->logic_and());
+        left.reset(new Logical(op
+                               ,left.release()
+                               ,right.release()));
+    }
+    return left.release();
+}
+Expression* parser::logic_and(){
+    std::unique_ptr<Expression> left(this->equality());
+    while(this->match(TokenType::AND)){
+        Token op = this->previous();
+        std::unique_ptr<Expression> right(this->equality());
+        left.reset(new Logical(op,left.release(),right.release()));
+    }
+    return left.release();
 }
 
 Expression* parser::conditional(){

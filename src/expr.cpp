@@ -40,3 +40,6 @@ std::any Expression::VisitorRPN::visitBinaryExpression(Binary*bin){
 std::any Expression::VisitorRPN::visitGroupingExpression(Grouping*gro){
    return this->parenthensize("group",gro->expression); 
 }
+std::any Expression::Visitor::visitLogicalExpression(Logical* lor){
+    return this->parenthensize(lor->op.lexeme,lor->left,lor->right); 
+}

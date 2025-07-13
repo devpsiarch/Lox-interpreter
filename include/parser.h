@@ -24,8 +24,12 @@
 
         expression     → assignement;
 
-        assignement    →  IDENTIFIER "=" assignement | conditional ;
+        assignement    →  IDENTIFIER "=" assignement | conditional | logic_or;
 
+        logic_or       → logic_and ("or" logic_and)*;
+    
+        logic_and      → equality ("and" equality)* ;
+ 
         // down here (in the conditional expression) am assuming that 
         // we have onyl expression in the middle and right , 
         // i dont recall the possiblitly of havinf statements in there place 
@@ -92,6 +96,8 @@ private:
     Expression* unary();
     Expression* primary();
     Expression* assignement();
+    Expression* logic_or();
+    Expression* logic_and();
 
     Statement* statement();
     Statement* declaration();
