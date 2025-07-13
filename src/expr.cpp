@@ -13,15 +13,20 @@ std::any Expression::Visitor::visitBinaryExpression(Binary*bin){
 std::any Expression::Visitor::visitGroupingExpression(Grouping*gro){
    return this->parenthensize("group",gro->expression); 
 }
+// place holder fr , idk what to fill these with 
+// i assume they look ok in the notaion but am not sure
 std::any Expression::Visitor::visitVariableExpression(Variable*var){
     (void)var;
-    return "declaration"; 
+    return this->parenthensize("variable"); 
 }
 std::any Expression::Visitor::visitAssignExpression(Assign*ass){
-    (void)ass;
-    return "assignement"; 
+    return this->parenthensize("assignement",ass->expr); 
 }
-
+std::any Expression::Visitor::visitConditionalExpression(Conditional*con){
+    return this->parenthensize("conditional",con->left
+                                            ,con->middle
+                                            ,con->right); 
+}
 std::any Expression::VisitorRPN::visitLiteralExpression(Literal*lit){
     if(!lit->value.has_value()) return "nil";
     return stdany_to_string(lit->value);

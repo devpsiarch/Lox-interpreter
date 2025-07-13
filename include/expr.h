@@ -14,6 +14,7 @@ class Binary;
 class Variable;
 class Grouping;
 class Assign;
+class Conditional;
 
 class Expression {
 public:
@@ -27,7 +28,7 @@ public:
         virtual std::any visitGroupingExpression(Grouping*gro);
         virtual std::any visitVariableExpression(Variable*var);
         virtual std::any visitAssignExpression(Assign*ass);
-        
+        virtual std::any visitConditionalExpression(Conditional*con);
 
         std::string astprinter(Expression*exp) {
             return stdany_to_string(exp->accept(*this));
@@ -209,5 +210,30 @@ public:
     }
     virtual ~Assign() final {
         delete expr;
+    }
+};
+
+class Conditional : public Expression {
+public:
+    Expression* left;
+    Expression* right;
+    Expression* middle;
+    Token op;
+    explicit Conditional(Token op,Expression* l,Expression* m,Expression* r) : op(op) {
+        this->left    = l;
+        this->right   = r;
+        this->middle  = m;
+    }
+    virtual std::any accept(Visitor&visitor) override final{
+        return visitor.visitConditionalExpression(this);
+    }
+    virtual std::any acceptRPN(VisitorRPN&visitor){
+        (void)visitor;
+        return nullptr;
+    }
+    virtual ~Conditional() final {
+        delete middle;
+        delete right;
+        delete left;
     }
 };

@@ -15,6 +15,7 @@ private:
     virtual std::any visitGroupingExpression(Grouping*gro) override;
     virtual std::any visitVariableExpression(Variable*var) override;
     virtual std::any visitAssignExpression(Assign*ass) override;
+    virtual std::any visitConditionalExpression(Conditional*con) override;
 
     virtual std::any visitExpressionStatement(ExpressionStatement* estmt) override;
     virtual std::any visitPrintStatement(PrintStatement* pstmt) override;

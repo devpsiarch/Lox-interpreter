@@ -195,7 +195,20 @@ std::any Interpreter::visitAssignExpression(Assign*ass){
     }catch(const environment::NameError&e){
         throw RunTimeError(ass->op,e.what()); 
     }
+}
 
+
+std::any Interpreter::visitConditionalExpression(Conditional*con){
+    try {
+        std::any value = this->evaluate(con->left);
+        if(isTruthy(value)){
+            return this->evaluate(con->middle);
+        }else{
+            return this->evaluate(con->right);
+        }
+    }catch(const environment::NameError&e){
+        throw RunTimeError(con->op,e.what()); 
+    } 
 }
 
 std::any Interpreter::visitExpressionStatement(ExpressionStatement* estmt){

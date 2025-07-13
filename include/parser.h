@@ -24,6 +24,11 @@
 
         assignement    →  IDENTIFIER "=" assignement | conditional ;
 
+        // down here (in the conditional expression) am assuming that 
+        // we have onyl expression in the middle and right , 
+        // i dont recall the possiblitly of havinf statements in there place 
+        // instread but hey , for now they are good
+        
         conditional    → equality ( "?" expression ":" expression )? ;
 
         equality       → comparison ( ( "!=" | "==" ) comparison )* ;

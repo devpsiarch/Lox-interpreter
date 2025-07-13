@@ -18,6 +18,7 @@ Next steps will include:
 - Implementing variables and environments
 - Supporting control flow (`if`, `while`, etc.)
 - Function definitions and calls
+- Better REPL features (history ...etc).
 
 ## 🔧 What’s Implemented
 

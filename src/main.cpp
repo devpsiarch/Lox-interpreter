@@ -10,8 +10,8 @@ void runPrompt();
 void runFile();
 
 int main(int argc,char *argv[]){
-    // runPrompt();
-    // return 0;
+    runPrompt();
+    return 0;
     if(!TESTING){
         Expression::Visitor v;
         Expression::VisitorRPN vr;

@@ -76,6 +76,7 @@ Expression* parser::assignement(){
 }
 
 Expression* parser::conditional(){
+    // here we either return a condional ds or a equality
     std::unique_ptr<Expression> left(this->equality());
     if(this->match(TokenType::TERNARY)){
         std::unique_ptr<Expression> middle(this->expression());
@@ -88,18 +89,11 @@ Expression* parser::conditional(){
             std::string err_msg = e.what();
             Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
         }
-        // NOTE: from my current understanding , ternary opertors are determined 
-        // at compile time, therefor at this stage , we should detemine what to return 
-        // based on left either middle or right using an evaluator
-        Interpreter temp_eval = Interpreter();
-        Expression* condition = left.release();
-        std::any condition_value = temp_eval.evaluate(condition);
-        delete condition;
-        if(Interpreter::isTruthy(condition_value)){
-            return middle.release();
-        }else{
-            return right.release();
-        }
+
+        return new Conditional(this->peek(),left.release()
+                               ,middle.release()
+                               ,right.release());
+
     }else{
         return left.release();
     }
@@ -183,7 +177,8 @@ Expression* parser::primary(){
     if(this->match(TokenType::NIL)) return new Literal(nullptr);
     if(this->match(TokenType::STRING,TokenType::NUMBER))
         return new Literal(previous().literal);
-    if(this->match(TokenType::IDENTIFIER)) return new Variable(this->previous());
+    if(this->match(TokenType::IDENTIFIER)) 
+        return new Variable(this->previous());
     if(this->match(TokenType::LEFT_PAREN)){
         std::unique_ptr<Expression> expr (this->expression());
         try {
