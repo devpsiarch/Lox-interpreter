@@ -24,3 +24,13 @@ var a = 1;
   print a;
 }
 print a;
+
+
+var x = 150;
+if(false) print "tonight, gherman joins the hunt ....";
+else print "dear oh dear ...";
+if(x == 150){
+    print "super";
+}else{
+    print "you are not super .... piss off";
+}

@@ -21,3 +21,7 @@ std::any Statement::Visitor::visitBlockStatement(BlockStatement* bstmt){
     (void)bstmt;
     return nullptr;
 }
+std::any Statement::Visitor::visitIfStatement(IfStatement* ifstmt){
+    (void)ifstmt;
+    return nullptr;
+}

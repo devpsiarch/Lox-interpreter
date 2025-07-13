@@ -202,9 +202,10 @@ Expression* parser::primary(){
 }
 
 Statement* parser::statement(){
-    if(this->match(TokenType::PRINT)) return print_statement();
+    if(this->match(TokenType::IF)) return this->if_statement();
+    if(this->match(TokenType::PRINT)) return this->print_statement();
     if(this->match(TokenType::LEFT_BRACE)){
-        std::vector<Statement*> result = block_statement();
+        std::vector<Statement*> result = this->block_statement();
         return new BlockStatement(result);
     }
     return expression_statement();
@@ -242,6 +243,20 @@ Statement* parser::declare_statement(){
     }
     this->consume(TokenType::SEMICOLEN,"Expected \';\' after variable declaration.");
     return new DeclareStatement(name,value.release());
+}
+
+Statement* parser::if_statement(){
+    this->consume(TokenType::LEFT_PAREN,"Expected a \'(\' after if statement.");
+    std::unique_ptr<Expression> expr(this->expression());
+    this->consume(TokenType::RIGHT_PAREN,"Expected a \')\' after if statement.");
+    std::unique_ptr<Statement> thenstmt(this->statement());
+    std::unique_ptr<Statement> elsestmt(nullptr);
+    if(this->match(TokenType::ELSE)){
+        elsestmt.reset(this->statement()); 
+    }
+    return new IfStatement(expr.release()
+                           ,thenstmt.release()
+                           ,elsestmt.release());
 }
 
 std::vector<Statement*> parser::block_statement(){

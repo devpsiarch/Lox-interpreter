@@ -6,6 +6,7 @@ class ExpressionStatement;
 class PrintStatement;
 class DeclareStatement;
 class BlockStatement;
+class IfStatement;
 
 class Statement {
 public:
@@ -15,6 +16,7 @@ public:
         virtual std::any visitPrintStatement(PrintStatement* pstmt);
         virtual std::any visitDeclareStatement(DeclareStatement* dstmt);
         virtual std::any visitBlockStatement(BlockStatement* bstmt);
+        virtual std::any visitIfStatement(IfStatement* ifstmt);
     };
     virtual std::any accept(Visitor& visitor) = 0;
     virtual ~Statement() = default;
@@ -23,7 +25,7 @@ public:
 class ExpressionStatement : public Statement {
 public:
     Expression* expr;
-    ExpressionStatement(Expression* expr){
+    explicit ExpressionStatement(Expression* expr){
         this->expr = expr;
     }
     virtual std::any accept(Visitor& visitor) override final {
@@ -39,7 +41,7 @@ class PrintStatement : public Statement {
 public:
     Expression* expr;
     Token op;
-    PrintStatement(Expression* expr,Token op) : op(op){
+    explicit PrintStatement(Expression* expr,Token op) : op(op){
         this->expr = expr;
     }
     virtual std::any accept(Visitor& visitor) override final {
@@ -54,7 +56,7 @@ class DeclareStatement : public Statement {
 public:
     Token name;
     Expression* init; // optional else nullpltr
-    DeclareStatement(Token name,Expression* expr = nullptr) : name(name) {
+    explicit DeclareStatement(Token name,Expression* expr = nullptr) : name(name) {
         this->init = expr;
     }
     virtual std::any accept(Visitor& visitor) override final {
@@ -68,7 +70,7 @@ public:
 class BlockStatement : public Statement {
 public:
     std::vector<Statement*> stmts;
-    BlockStatement(std::vector<Statement*>&stmnts) : stmts(stmnts){}
+    explicit BlockStatement(std::vector<Statement*>&stmnts) : stmts(stmnts){}
     virtual std::any accept(Visitor& visitor) override final {
         return visitor.visitBlockStatement(this);
     }
@@ -76,5 +78,25 @@ public:
         for(Statement* st:this->stmts){
             delete st;
         } 
+    }
+};
+
+class IfStatement : public Statement {
+public:
+    Expression* Texpr;
+    Statement* thenStmt;
+    Statement* elseStmt;
+    explicit IfStatement(Expression* expr,Statement* ts,Statement* es = nullptr){
+        this->Texpr = expr;
+        this->thenStmt = ts;
+        this->elseStmt = es;
+    }
+    virtual std::any accept(Visitor& visitor) override final {
+        return visitor.visitIfStatement(this);
+    }
+    virtual ~IfStatement() {
+        delete this->Texpr;
+        delete this->thenStmt;
+        delete this->elseStmt;
     }
 };

@@ -21,6 +21,7 @@ private:
     virtual std::any visitPrintStatement(PrintStatement* pstmt) override;
     virtual std::any visitDeclareStatement(DeclareStatement* dstmt) override;
     virtual std::any visitBlockStatement(BlockStatement* bstmt) override;
+    virtual std::any visitIfStatement(IfStatement* ifstmt) override;
     
     bool isEqual(std::any obj1,std::any obj2); 
     
@@ -44,13 +45,15 @@ private:
         }
     };
     
-public:
-    void Interpret(Expression* expr);
-    void InterpretProgram(std::vector<Statement*>& stmt);
     static bool isTruthy(std::any obj);
     std::any evaluate(Expression* expr);
     void execute(Statement* st);
-    void executeBlock(std::vector<Statement*>&stmts,environment&env);
+    void executeBlock(std::vector<Statement*>&stmts,environment&env);   
+
+public:
+    void Interpret(Expression* expr);
+    void InterpretProgram(std::vector<Statement*>& stmt);
+
     Interpreter(bool repl = false){
         this->env = new environment();
         this->REPL = repl;

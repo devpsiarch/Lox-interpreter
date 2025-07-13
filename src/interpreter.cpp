@@ -260,6 +260,15 @@ std::any Interpreter::visitBlockStatement(BlockStatement* bstmt){
     return nullptr;
 }
 
+std::any Interpreter::visitIfStatement(IfStatement* ifstmt){
+    if(this->isTruthy(this->evaluate(ifstmt->Texpr))){
+        this->execute(ifstmt->thenStmt);
+    }else if(ifstmt->elseStmt != nullptr){
+        this->execute(ifstmt->elseStmt);
+    }
+    return nullptr;
+}
+
 void Interpreter::Interpret(Expression* expr){
     try {
         std::any result = this->evaluate(expr);

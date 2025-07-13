@@ -12,14 +12,16 @@
 
         declaration    → varDeclare | statement ;
     
-        statement      → exprStmt | printStmt | block;
+        statement      → exprStmt | printStmt | block | if_statement;
 
         blockstatement → '{' declaration* '}' ;
 
         exprStmt       → expression ';' ;
 
         printStmt      → "print" expression ";" ;
-     
+
+        if_statement   → "if" '(' expression ')' statement ("else" statement)? ;
+
         expression     → assignement;
 
         assignement    →  IDENTIFIER "=" assignement | conditional ;
@@ -97,6 +99,7 @@ private:
     Statement* print_statement();
     Statement* expression_statement();
     Statement* declare_statement();
+    Statement* if_statement();
     std::vector<Statement*> block_statement();
 
     void synchronize(void); // when encourtering a syntax error , we are suppoed to skip 
