@@ -104,9 +104,6 @@ std::any Interpreter::visitBinaryExpression(Binary*bin) {
     std::any l = this->evaluate(bin->left);
     std::any r = this->evaluate(bin->right);
     
-
-
-
     switch (bin->op.type) {
         case MINUS:
             assertTypeBinary(typeid(double),l,r,bin->op);
@@ -203,10 +200,14 @@ std::any Interpreter::visitAssignExpression(Assign*ass){
 
 std::any Interpreter::visitExpressionStatement(ExpressionStatement* estmt){
     std::any value = this->evaluate(estmt->expr);
+    if(this->REPL)
+        std::cout << stdany_to_string(value) << '\n';
     return nullptr;
 } 
 std::any Interpreter::visitPrintStatement(PrintStatement* pstmt){
     std::any value = this->evaluate(pstmt->expr);
+    if(stdany_to_string(value) == "nil")
+        throw RunTimeError(pstmt->op,"Can't print uninitilized value , maybe replace it will nil ?");
     std::cout << stdany_to_string(value) << '\n';
     return nullptr;   
 }

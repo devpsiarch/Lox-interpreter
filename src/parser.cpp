@@ -231,7 +231,7 @@ Statement* parser::declaration(){
 Statement* parser::print_statement(){
     std::unique_ptr<Expression> expr(this->expression());
     this->consume(TokenType::SEMICOLEN,"Expected \';\' after print statement.");
-    return new PrintStatement(expr.release());
+    return new PrintStatement(expr.release(),this->peek());
 }
 Statement* parser::expression_statement(){
     std::unique_ptr<Expression>expr(this->expression());

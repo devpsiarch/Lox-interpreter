@@ -38,7 +38,8 @@ public:
 class PrintStatement : public Statement {
 public:
     Expression* expr;
-    PrintStatement(Expression* expr){
+    Token op;
+    PrintStatement(Expression* expr,Token op) : op(op){
         this->expr = expr;
     }
     virtual std::any accept(Visitor& visitor) override final {

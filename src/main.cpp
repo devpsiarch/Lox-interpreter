@@ -55,7 +55,7 @@ void run_line(Interpreter&inter,const std::string&line){
 void runPrompt(){
     std::string line;
     bool shouldclose = false;
-    Interpreter inter;
+    Interpreter inter(true);
     while(!shouldclose){
         // interpritation here
         std::cout << "=> ";

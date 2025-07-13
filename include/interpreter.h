@@ -7,6 +7,7 @@ class Interpreter : public Expression::Visitor , public Statement::Visitor {
 private:
 
     environment* env;
+    bool REPL;
 
     virtual std::any visitLiteralExpression(Literal*lit) override;
     virtual std::any visitUnaryExpression(Unary*una) override;
@@ -49,8 +50,9 @@ public:
     std::any evaluate(Expression* expr);
     void execute(Statement* st);
     void executeBlock(std::vector<Statement*>&stmts,environment&env);
-    Interpreter(){
+    Interpreter(bool repl = false){
         this->env = new environment();
+        this->REPL = repl;
     }
     ~Interpreter(){
         delete this->env;
