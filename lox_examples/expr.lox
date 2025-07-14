@@ -74,4 +74,16 @@ while (i < 10) {
 }
 
 
+// fibo 
+print "fibo go go :";
+var a = 0;
+var temp = 1;
+for(var b = 1 ; b < 10000 ; b = b + temp){
+    print a;
+    temp = a;
+    a = b;
+}
+
 print "---------------------";
+
+

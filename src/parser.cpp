@@ -223,6 +223,7 @@ Expression* parser::primary(){
 }
 
 Statement* parser::statement(){
+    if(this->match(TokenType::FOR)) return this->for_statement();
     if(this->match(TokenType::WHILE)) return this->while_statement();
     if(this->match(TokenType::IF)) return this->if_statement();
     if(this->match(TokenType::PRINT)) return this->print_statement();
@@ -288,6 +289,55 @@ Statement* parser::while_statement(){
     std::unique_ptr<Statement> body(this->statement());
     return new WhileStatement(cond.release()
                               ,body.release());
+}
+
+Statement* parser::for_statement(){
+    this->consume(TokenType::LEFT_PAREN,"Expected a \'(\' after a for statement.");
+    
+    std::unique_ptr<Statement> first;
+    if(this->match(SEMICOLEN)){
+        first.reset(nullptr);
+    }
+    else if(this->match(TokenType::VAR)){
+        first.reset(this->declare_statement());
+    }else{
+        first.reset(this->expression_statement());
+    }
+    
+    std::unique_ptr<Expression> condition;
+    if(!this->check(TokenType::SEMICOLEN)){
+        condition.reset(this->expression());
+    }
+    this->consume(TokenType::SEMICOLEN,"Expected \';\' after for loop condition.");
+    
+    std::unique_ptr<Expression> increm;
+    if(!this->check(TokenType::RIGHT_PAREN)){
+        increm.reset(this->expression());
+    }
+    this->consume(TokenType::RIGHT_PAREN,"Expected \')\' after for loop condition.");
+
+    std::unique_ptr<Statement> body(this->statement());
+
+    // here we are basicly building a while loop using the 
+    // infomation we parsed from a for loop. look up desugaring
+
+    // if we have and inc then the body is just a block 
+    if(increm != nullptr){
+        std::vector<Statement*> stmts = {body.release(),new ExpressionStatement(increm.release())};
+        body.reset(new BlockStatement(stmts));
+    }
+
+    // the condition we parserd makes it a while using that condition
+    if(condition == nullptr) condition.reset(new Literal(true));
+    body.reset(new WhileStatement(condition.release(),body.release()));
+
+    // if we have a first then we execute it before the while loop
+    if(first != nullptr){
+        std::vector<Statement*> stmts = {first.release(),body.release()};
+        body.reset(new BlockStatement(stmts));
+    }
+
+    return body.release();
 }
 
 std::vector<Statement*> parser::block_statement(){

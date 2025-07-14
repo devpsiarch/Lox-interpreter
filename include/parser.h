@@ -12,7 +12,7 @@
 
         declaration    → varDeclare | statement ;
     
-        statement      → exprStmt | printStmt | block | if_statement | while_statement;
+        statement      → exprStmt | printStmt | block | if_statement | while_statement | for_statement ;
 
         blockstatement → '{' declaration* '}' ;
 
@@ -23,7 +23,9 @@
         if_statement   → "if" '(' expression ')' statement ("else" statement)? ;
 
         while_statement→ "while" '(' expression ')' statement ;
- 
+
+        for_statement  → "for" '(' ( varDeclare | exprStmt | ';') expression? ";" expression ";" ')' statement;
+
         expression     → assignement;
 
         assignement    →  IDENTIFIER "=" assignement | conditional | logic_or;
@@ -109,6 +111,7 @@ private:
     Statement* declare_statement();
     Statement* if_statement();
     Statement* while_statement();
+    Statement* for_statement();
     
     std::vector<Statement*> block_statement();
 
