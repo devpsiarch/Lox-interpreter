@@ -7,6 +7,7 @@ class PrintStatement;
 class DeclareStatement;
 class BlockStatement;
 class IfStatement;
+class WhileStatement;
 
 class Statement {
 public:
@@ -17,6 +18,7 @@ public:
         virtual std::any visitDeclareStatement(DeclareStatement* dstmt);
         virtual std::any visitBlockStatement(BlockStatement* bstmt);
         virtual std::any visitIfStatement(IfStatement* ifstmt);
+        virtual std::any visitWhileStatement(WhileStatement* wstmt);
     };
     virtual std::any accept(Visitor& visitor) = 0;
     virtual ~Statement() = default;
@@ -98,5 +100,22 @@ public:
         delete this->Texpr;
         delete this->thenStmt;
         delete this->elseStmt;
+    }
+};
+
+class WhileStatement : public Statement {
+public:
+    Expression* Texpr;
+    Statement* stmt;
+    explicit WhileStatement(Expression* expr,Statement* stmt){
+        this->Texpr = expr;
+        this->stmt = stmt;
+    }
+    virtual std::any accept(Visitor& visitor) override final {
+        return visitor.visitWhileStatement(this);
+    }
+    virtual ~WhileStatement() {
+        delete this->Texpr;
+        delete this->stmt;
     }
 };

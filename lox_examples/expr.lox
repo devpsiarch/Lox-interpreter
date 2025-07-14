@@ -41,3 +41,37 @@ print "hi" or 2; // "hi".
 print nil or "yes"; // "yes".
 
 if(10 == 10 and !(2 == 2)) print "YUUUPIIIN";
+
+
+print "---------------------";
+
+var i = 0;
+var j = 10;
+{
+    i = 5;
+    j = -1;
+    print i;
+    print j;
+}
+print "outer " + i;
+print "outer " + j;
+
+print "---------------------";
+
+var name = "daud";
+
+{
+    name = "josh";
+    print name;
+}
+
+print name;
+
+var i = 0;
+while (i < 10) {
+    print i;
+    i = i + 1;
+}
+
+
+print "---------------------";

@@ -4,29 +4,30 @@
 #include <any>
 #include <exception>
 #include <memory>
+#include <iostream>
+#include "./tool/tool.h"
 
 class environment {
-private:
-    std::map<std::string,std::any> SymbolTable;
-    std::unique_ptr<environment> closing;
 public:
-    environment() = default;
-    environment(environment&other) : 
-        SymbolTable(other.SymbolTable) , 
-        closing(other.closing ? std::make_unique<environment>(*other.closing) : nullptr)
-    {}
+    std::map<std::string,std::any> SymbolTable;
+    environment* closing;
+    environment(){
+        this->closing = nullptr;
+    }
+    environment(environment&other) : SymbolTable(other.SymbolTable)
+    {
+        this->closing = (other.closing != nullptr) ? new environment(*other.closing) : nullptr;
+    }
     environment& operator=(environment&other){
         if(&other != this){
             this->SymbolTable = other.SymbolTable;
-            if(other.closing)
-                this->closing = std::make_unique<environment>(*other.closing);
-            else {
-                closing.reset();
-            }
+            this->closing = (other.closing != nullptr) ? new environment(*other.closing) : nullptr;
         }
         return *this;
     }
-    ~environment() = default;
+    ~environment(){
+        delete this->closing;
+    }
     void define(const std::string&key,std::any value); // defines a value to a key
     void assign(const std::string&key,std::any value); // asigns a value to a key
     std::any get(const std::string&key); // gets the value from the table

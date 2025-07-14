@@ -25,3 +25,7 @@ std::any Statement::Visitor::visitIfStatement(IfStatement* ifstmt){
     (void)ifstmt;
     return nullptr;
 }
+std::any Statement::Visitor::visitWhileStatement(WhileStatement* wstmt){
+    (void)wstmt;
+    return nullptr;
+}

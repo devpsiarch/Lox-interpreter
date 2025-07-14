@@ -23,6 +23,7 @@ private:
     virtual std::any visitDeclareStatement(DeclareStatement* dstmt) override;
     virtual std::any visitBlockStatement(BlockStatement* bstmt) override;
     virtual std::any visitIfStatement(IfStatement* ifstmt) override;
+    virtual std::any visitWhileStatement(WhileStatement* wstmt) override;
     
     bool isEqual(std::any obj1,std::any obj2); 
     
@@ -49,7 +50,7 @@ private:
     static bool isTruthy(std::any obj);
     std::any evaluate(Expression* expr);
     void execute(Statement* st);
-    void executeBlock(std::vector<Statement*>&stmts,environment&env);   
+    void executeBlock(std::vector<Statement*>&stmts);   
 
 public:
     void Interpret(Expression* expr);

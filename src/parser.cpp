@@ -223,6 +223,7 @@ Expression* parser::primary(){
 }
 
 Statement* parser::statement(){
+    if(this->match(TokenType::WHILE)) return this->while_statement();
     if(this->match(TokenType::IF)) return this->if_statement();
     if(this->match(TokenType::PRINT)) return this->print_statement();
     if(this->match(TokenType::LEFT_BRACE)){
@@ -278,6 +279,15 @@ Statement* parser::if_statement(){
     return new IfStatement(expr.release()
                            ,thenstmt.release()
                            ,elsestmt.release());
+}
+
+Statement* parser::while_statement(){
+    this->consume(TokenType::LEFT_PAREN,"Expected a \'(\' after while statement.");
+    std::unique_ptr<Expression> cond(this->expression());
+    this->consume(TokenType::RIGHT_PAREN,"Expected a \')\' after while statement.");
+    std::unique_ptr<Statement> body(this->statement());
+    return new WhileStatement(cond.release()
+                              ,body.release());
 }
 
 std::vector<Statement*> parser::block_statement(){

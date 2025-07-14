@@ -5,7 +5,7 @@ void environment::define(const std::string&key,std::any value){
 }
 void environment::assign(const std::string&key,std::any value){
     if(this->isKeyIn(key)){
-        this->define(key,value);
+        this->SymbolTable[key] = value;
         return;
     }
     if(this->closing != nullptr){
@@ -14,6 +14,7 @@ void environment::assign(const std::string&key,std::any value){
     }
     std::string reason = "Variable \'" + key + "\' not defined , it cant be assigned.";
     throw NameError(reason.c_str());
+
 }
 std::any environment::get(const std::string&key){
     if(this->isKeyIn(key)){

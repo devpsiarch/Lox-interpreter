@@ -256,25 +256,25 @@ std::any Interpreter::visitDeclareStatement(DeclareStatement* dstmt){
     }
 }
 
-void Interpreter::executeBlock(std::vector<Statement*>&stmts,environment&env){
-    environment saved = *this->env;
+void Interpreter::executeBlock(std::vector<Statement*>&stmts){
+    environment* child = new environment();
+    child->closing = this->env;
+    this->env = child;
     try {
-        *this->env = env;
         for(Statement* st:stmts){
             this->execute(st);
         }
     }catch(const RunTimeError&e){
-        // in case of a error
-        *this->env = saved;
         std::string err_msg = e.what();
         Logger::error(e.faulty_op.line,e.faulty_op.col,err_msg);
     }
-    *this->env = saved;
+    this->env = child->closing;
+    child->closing = nullptr;
+    delete child;
 }
 
 std::any Interpreter::visitBlockStatement(BlockStatement* bstmt){
-    environment copy = *this->env;
-    this->executeBlock(bstmt->stmts,copy);
+    this->executeBlock(bstmt->stmts);
     return nullptr;
 }
 
@@ -283,6 +283,14 @@ std::any Interpreter::visitIfStatement(IfStatement* ifstmt){
         this->execute(ifstmt->thenStmt);
     }else if(ifstmt->elseStmt != nullptr){
         this->execute(ifstmt->elseStmt);
+    }
+    return nullptr;
+}
+
+
+std::any Interpreter::visitWhileStatement(WhileStatement* wstmt){
+    while(this->isTruthy(this->evaluate(wstmt->Texpr))){
+        this->execute(wstmt->stmt);
     }
     return nullptr;
 }
