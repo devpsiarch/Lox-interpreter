@@ -8,6 +8,9 @@ class DeclareStatement;
 class BlockStatement;
 class IfStatement;
 class WhileStatement;
+class BreakStatement;
+class ContinueStatement;
+
 
 class Statement {
 public:
@@ -19,6 +22,8 @@ public:
         virtual std::any visitBlockStatement(BlockStatement* bstmt);
         virtual std::any visitIfStatement(IfStatement* ifstmt);
         virtual std::any visitWhileStatement(WhileStatement* wstmt);
+        virtual std::any visitBreakStatement(BreakStatement* brstmt);
+        virtual std::any visitContinueStatement(ContinueStatement* cstmt);
     };
     virtual std::any accept(Visitor& visitor) = 0;
     virtual ~Statement() = default;
@@ -118,4 +123,24 @@ public:
         delete this->Texpr;
         delete this->stmt;
     }
+};
+
+class BreakStatement : public Statement {
+public:
+    Token op;
+    explicit BreakStatement(Token op) : op(op){}
+    virtual std::any accept(Visitor& visitor) override final {
+        return visitor.visitBreakStatement(this);
+    }   
+    virtual ~BreakStatement() = default;
+};
+
+class ContinueStatement : public Statement {
+public:
+    Token op;
+    explicit ContinueStatement(Token op) : op(op){}
+    virtual std::any accept(Visitor& visitor) override final {
+        return visitor.visitContinueStatement(this);
+    }   
+    virtual ~ContinueStatement() = default;
 };

@@ -19,6 +19,7 @@ Next steps will include:
 - Supporting control flow (`if`, `while`, etc.)
 - Function definitions and calls
 - Better REPL features (history ...etc).
+- FFI to execute libc functionality.
 
 ## 🔧 What’s Implemented
 

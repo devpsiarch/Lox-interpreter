@@ -25,6 +25,7 @@ enum TokenType {
     // key words
     AND,CLASS,ELSE,FALSE,FUN,FOR,IF,NIL,OR,
     PRINT,RETURN,SUPER,THIS,TRUE,VAR,WHILE,
+    BREAK,CONTINUE,
 
     // refers to the end of the file
     EOFF
@@ -111,6 +112,8 @@ public:
         {"this",   TokenType::THIS},
         {"true",   TokenType::TRUE},
         {"var",    TokenType::VAR},
-        {"while",  TokenType::WHILE}
+        {"while",  TokenType::WHILE},
+        {"break",  TokenType::BREAK},
+        {"continue",  TokenType::CONTINUE}
     };
 };

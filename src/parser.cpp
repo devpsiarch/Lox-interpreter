@@ -223,6 +223,8 @@ Expression* parser::primary(){
 }
 
 Statement* parser::statement(){
+    if(this->match(TokenType::BREAK)) return this->break_statement();
+    if(this->match(TokenType::CONTINUE)) return this->continue_statement();
     if(this->match(TokenType::FOR)) return this->for_statement();
     if(this->match(TokenType::WHILE)) return this->while_statement();
     if(this->match(TokenType::IF)) return this->if_statement();
@@ -338,6 +340,17 @@ Statement* parser::for_statement(){
     }
 
     return body.release();
+}
+
+Statement* parser::break_statement(){
+    Token op = this->previous();
+    this->consume(TokenType::SEMICOLEN,"Expected \';\' after break.");
+    return new BreakStatement(op);
+}
+Statement* parser::continue_statement(){
+    Token op = this->previous();
+    this->consume(TokenType::SEMICOLEN,"Expected \';\' after continue.");
+    return new ContinueStatement(op);
 }
 
 std::vector<Statement*> parser::block_statement(){

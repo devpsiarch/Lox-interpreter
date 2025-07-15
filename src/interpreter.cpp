@@ -262,11 +262,19 @@ void Interpreter::executeBlock(std::vector<Statement*>&stmts){
     this->env = child;
     try {
         for(Statement* st:stmts){
+            if(st == nullptr) break;
             this->execute(st);
         }
     }catch(const RunTimeError&e){
         std::string err_msg = e.what();
         Logger::error(e.faulty_op.line,e.faulty_op.col,err_msg);
+    }catch(...){
+        // we rethrow because we are not reponsible to determine if the 
+        // control statememt is coherient
+        this->env = child->closing;
+        child->closing = nullptr;
+        delete child;       
+        throw;
     }
     this->env = child->closing;
     child->closing = nullptr;
@@ -289,12 +297,37 @@ std::any Interpreter::visitIfStatement(IfStatement* ifstmt){
 
 
 std::any Interpreter::visitWhileStatement(WhileStatement* wstmt){
+    continue_point:
     while(this->isTruthy(this->evaluate(wstmt->Texpr))){
-        this->execute(wstmt->stmt);
+        try {
+            this->execute(wstmt->stmt);
+        }catch(const Interpreter::ControlFlow&e){
+            switch(e.op.type){
+                case TokenType::BREAK:
+                    goto break_point;
+                    break;
+                case TokenType::CONTINUE:
+                    goto continue_point;    
+                    break;
+                default:
+                    break;
+            }
+        }
     }
+    break_point:
     return nullptr;
 }
 
+std::any Interpreter::visitBreakStatement(BreakStatement* brstmt){
+    throw ControlFlow(brstmt->op); 
+    return nullptr;
+}
+std::any Interpreter::visitContinueStatement(ContinueStatement* cstmt){
+    throw ControlFlow(cstmt->op); 
+    return nullptr;
+}
+
+// we dont use this any more as a defacto 
 void Interpreter::Interpret(Expression* expr){
     try {
         std::any result = this->evaluate(expr);
@@ -320,14 +353,20 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
             }
             this->execute(st);
         }
-        for(Statement* st:stmt){
-            delete st; 
-        }
+
+    }catch(const ControlFlow&outofloop){
+        std::string err_msg = "SymanticError: ";
+        err_msg += (outofloop.op.type == TokenType::BREAK) ? "break" : "continue";
+        err_msg += " outside of a loop.";
+        Logger::error(outofloop.op.line,outofloop.op.col,err_msg);
     }catch(const RunTimeError&e){
         for(Statement* st:stmt){
             delete st; 
         }
         std::string err_msg = e.what();
         Logger::error(e.faulty_op.line,e.faulty_op.col,err_msg);
+    }
+    for(Statement* st:stmt){
+        delete st; 
     }
 }

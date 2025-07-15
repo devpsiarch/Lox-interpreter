@@ -24,6 +24,8 @@ private:
     virtual std::any visitBlockStatement(BlockStatement* bstmt) override;
     virtual std::any visitIfStatement(IfStatement* ifstmt) override;
     virtual std::any visitWhileStatement(WhileStatement* wstmt) override;
+    virtual std::any visitBreakStatement(BreakStatement* brstmt) override;
+    virtual std::any visitContinueStatement(ContinueStatement* cstmt) override;
     
     bool isEqual(std::any obj1,std::any obj2); 
     
@@ -47,6 +49,13 @@ private:
         }
     };
     
+    class ControlFlow {
+    public:
+        Token op;
+        ControlFlow(Token op) : op(op){}
+        ~ControlFlow() = default;
+    };
+
     static bool isTruthy(std::any obj);
     std::any evaluate(Expression* expr);
     void execute(Statement* st);

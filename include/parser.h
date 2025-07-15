@@ -12,7 +12,9 @@
 
         declaration    → varDeclare | statement ;
     
-        statement      → exprStmt | printStmt | block | if_statement | while_statement | for_statement ;
+        statement      → exprStmt | printStmt | block | 
+                        if_statement | while_statement | for_statement | 
+                        break_statement | continue_statement;
 
         blockstatement → '{' declaration* '}' ;
 
@@ -23,6 +25,10 @@
         if_statement   → "if" '(' expression ')' statement ("else" statement)? ;
 
         while_statement→ "while" '(' expression ')' statement ;
+
+        break_statement→ "break" ';' ;
+        
+        continue_statement→ "continue" ';' ;
 
         for_statement  → "for" '(' ( varDeclare | exprStmt | ';') expression? ";" expression ";" ')' statement;
 
@@ -112,7 +118,10 @@ private:
     Statement* if_statement();
     Statement* while_statement();
     Statement* for_statement();
-    
+    Statement* break_statement();
+    Statement* continue_statement();
+
+
     std::vector<Statement*> block_statement();
 
     void synchronize(void); // when encourtering a syntax error , we are suppoed to skip 
