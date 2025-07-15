@@ -12,20 +12,22 @@ Currently, the interpreter supports:
 - Lexing (scanning) the source code into tokens
 - Parsing arithmetic expressions into an AST
 - Evaluating arithmetic expressions at runtime
-
-Next steps will include:
 - Adding support for grouping, comparison, and equality operators
 - Implementing variables and environments
 - Supporting control flow (`if`, `while`, etc.)
+
+Next steps will include:
+
 - Function definitions and calls
 - Better REPL features (history ...etc).
 - FFI to execute libc functionality.
+- Multithreading feature.
 
 ## 🔧 What’s Implemented
 
 - [x] **Lexer (Scanner)** — Converts source code into tokens
 - [x] **Parser** — Converts tokens into an abstract syntax tree (AST)
-- [x] **Interpreter** — Evaluates arithmetic expressions like `1 + 2 * (3 - 4)`  
+- [x] **Interpreter** — Evaluates arithmetic and logical  
 
 ## 🧠 Motivation
 

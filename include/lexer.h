@@ -12,6 +12,7 @@ enum TokenType {
     // single char tokens 
     LEFT_PAREN,RIGHT_PAREN,LEFT_BRACE,RIGHT_BRACE,
     COMMA,DOT,MINUS,PLUS,COLEN,SEMICOLEN,SLASH,STAR,TERNARY,
+    MOD,
 
     // One or two char long
     BANG,BAND_EQUAL,

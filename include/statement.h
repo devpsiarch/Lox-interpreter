@@ -8,6 +8,7 @@ class DeclareStatement;
 class BlockStatement;
 class IfStatement;
 class WhileStatement;
+class ForStatement;
 class BreakStatement;
 class ContinueStatement;
 
@@ -22,6 +23,7 @@ public:
         virtual std::any visitBlockStatement(BlockStatement* bstmt);
         virtual std::any visitIfStatement(IfStatement* ifstmt);
         virtual std::any visitWhileStatement(WhileStatement* wstmt);
+        virtual std::any visitForStatement(ForStatement* fstmt);
         virtual std::any visitBreakStatement(BreakStatement* brstmt);
         virtual std::any visitContinueStatement(ContinueStatement* cstmt);
     };
@@ -122,6 +124,30 @@ public:
     virtual ~WhileStatement() {
         delete this->Texpr;
         delete this->stmt;
+    }
+};
+
+class ForStatement : public Statement {
+public:
+    Statement* init;
+    Expression* incr;
+    Expression* cond;
+    Statement* stmts;
+    explicit ForStatement(Statement* init,Expression*incr,
+                          Expression* expr,Statement* stmts) {
+        this->init = init;
+        this->incr = incr;
+        this->cond = expr;
+        this->stmts = stmts;
+    }
+    virtual std::any accept(Visitor& visitor) override final {
+        return visitor.visitForStatement(this);
+    }
+    virtual ~ForStatement() {
+        delete this->init;
+        delete this->incr;
+        delete this->cond;
+        delete this->stmts;
     }
 };
 

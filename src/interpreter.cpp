@@ -105,6 +105,10 @@ std::any Interpreter::visitBinaryExpression(Binary*bin) {
     std::any r = this->evaluate(bin->right);
     
     switch (bin->op.type) {
+        case MOD:
+            assertTypeBinary(typeid(double),l,r,bin->op);
+            return double((int)std::any_cast<double>(l) % (int)std::any_cast<double>(r));
+            break;
         case MINUS:
             assertTypeBinary(typeid(double),l,r,bin->op);
             return std::any_cast<double>(l) - std::any_cast<double>(r);
@@ -313,6 +317,30 @@ std::any Interpreter::visitWhileStatement(WhileStatement* wstmt){
                     break;
             }
         }
+    }
+    break_point:
+    return nullptr;
+}
+
+std::any Interpreter::visitForStatement(ForStatement* fstmt){
+    this->execute(fstmt->init);
+    while(this->isTruthy(this->evaluate(fstmt->cond))){
+        try {
+            this->execute(fstmt->stmts);
+        }catch(const Interpreter::ControlFlow&e){
+            switch(e.op.type){
+                case TokenType::BREAK:
+                    goto break_point;
+                    break;
+                case TokenType::CONTINUE:
+                    goto continue_point;    
+                    break;
+                default:
+                    break;
+            }
+        }
+        continue_point:
+        this->evaluate(fstmt->incr);
     }
     break_point:
     return nullptr;

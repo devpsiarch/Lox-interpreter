@@ -55,6 +55,7 @@ std::string type_to_string(enum TokenType t){
         case TokenType::TERNARY: return "TERNARY";
         case TokenType::SLASH: return "SLASH";
         case TokenType::STAR: return "STAR";
+        case TokenType::MOD: return "MOD";
 
         case TokenType::BANG: return "BANG";
         case TokenType::BAND_EQUAL: return "BAND_EQUAL";
@@ -85,6 +86,8 @@ std::string type_to_string(enum TokenType t){
         case TokenType::TRUE: return "TRUE";
         case TokenType::VAR: return "VAR";
         case TokenType::WHILE: return "WHILE";
+        case TokenType::BREAK: return "BREAK";
+        case TokenType::CONTINUE: return "CONTINUE";
 
         case TokenType::EOFF: return "EOFF";
 
@@ -235,6 +238,7 @@ void Lexer::scanToken(){
         case ':': this->addToken(COLEN); break;
         case '?': this->addToken(TERNARY); break;
         case '*': this->addToken(STAR); break;
+        case '%': this->addToken(MOD); break;
         case '!': 
             addToken(match('=') ? BAND_EQUAL : BANG);
             break;

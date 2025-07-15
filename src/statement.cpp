@@ -29,6 +29,10 @@ std::any Statement::Visitor::visitWhileStatement(WhileStatement* wstmt){
     (void)wstmt;
     return nullptr;
 }
+std::any Statement::Visitor::visitForStatement(ForStatement* fstmt){
+    (void)fstmt;
+    return nullptr;
+}
 std::any Statement::Visitor::visitBreakStatement(BreakStatement* brstmt){
     (void)brstmt;
     return nullptr;

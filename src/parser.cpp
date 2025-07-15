@@ -163,7 +163,7 @@ Expression* parser::term(){
     return left.release();
 }
 Expression* parser::factor(){
-    if(this->match(TokenType::SLASH,TokenType::STAR)){
+    if(this->match(TokenType::SLASH,TokenType::STAR,TokenType::MOD)){
         Token e = this->peek();
         std::string err_msg = "Missing left hand side of binary operation.";
         Logger::error(e.line,e.col,err_msg);
@@ -173,7 +173,8 @@ Expression* parser::factor(){
     std::unique_ptr<Expression>left(this->unary());
     while(this->match(
         TokenType::STAR,
-        TokenType::SLASH
+        TokenType::SLASH,
+        TokenType::MOD
     )){
         Token op = this->previous();
         std::unique_ptr<Expression> right(unary());
@@ -296,14 +297,14 @@ Statement* parser::while_statement(){
 Statement* parser::for_statement(){
     this->consume(TokenType::LEFT_PAREN,"Expected a \'(\' after a for statement.");
     
-    std::unique_ptr<Statement> first;
+    std::unique_ptr<Statement> init;
     if(this->match(SEMICOLEN)){
-        first.reset(nullptr);
+        init.reset(nullptr);
     }
     else if(this->match(TokenType::VAR)){
-        first.reset(this->declare_statement());
+        init.reset(this->declare_statement());
     }else{
-        first.reset(this->expression_statement());
+        init.reset(this->expression_statement());
     }
     
     std::unique_ptr<Expression> condition;
@@ -320,26 +321,34 @@ Statement* parser::for_statement(){
 
     std::unique_ptr<Statement> body(this->statement());
 
+    return new ForStatement(init.release()
+                            ,increm.release()
+                            ,condition.release()
+                            ,body.release());
+
     // here we are basicly building a while loop using the 
     // infomation we parsed from a for loop. look up desugaring
+    
+    // i would have kept the desugaring methode if it werent foe the 
+    // fact that it disallows the continue statement. 
 
     // if we have and inc then the body is just a block 
-    if(increm != nullptr){
-        std::vector<Statement*> stmts = {body.release(),new ExpressionStatement(increm.release())};
-        body.reset(new BlockStatement(stmts));
-    }
-
-    // the condition we parserd makes it a while using that condition
-    if(condition == nullptr) condition.reset(new Literal(true));
-    body.reset(new WhileStatement(condition.release(),body.release()));
-
-    // if we have a first then we execute it before the while loop
-    if(first != nullptr){
-        std::vector<Statement*> stmts = {first.release(),body.release()};
-        body.reset(new BlockStatement(stmts));
-    }
-
-    return body.release();
+    // if(increm != nullptr){
+    //     std::vector<Statement*> stmts = {body.release(),new ExpressionStatement(increm.release())};
+    //     body.reset(new BlockStatement(stmts));
+    // }
+    //
+    // // the condition we parserd makes it a while using that condition
+    // if(condition == nullptr) condition.reset(new Literal(true));
+    // body.reset(new WhileStatement(condition.release(),body.release()));
+    //
+    // // if we have a init then we execute it before the while loop
+    // if(init != nullptr){
+    //     std::vector<Statement*> stmts = {init.release(),body.release()};
+    //     body.reset(new BlockStatement(stmts));
+    // }
+    //
+    // return body.release();
 }
 
 Statement* parser::break_statement(){

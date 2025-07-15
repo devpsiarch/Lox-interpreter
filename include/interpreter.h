@@ -24,6 +24,7 @@ private:
     virtual std::any visitBlockStatement(BlockStatement* bstmt) override;
     virtual std::any visitIfStatement(IfStatement* ifstmt) override;
     virtual std::any visitWhileStatement(WhileStatement* wstmt) override;
+    virtual std::any visitForStatement(ForStatement* fstmt) override;
     virtual std::any visitBreakStatement(BreakStatement* brstmt) override;
     virtual std::any visitContinueStatement(ContinueStatement* cstmt) override;
     
