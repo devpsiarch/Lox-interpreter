@@ -6,6 +6,8 @@
 #include <memory>
 #include <iostream>
 #include "./tool/tool.h"
+#include "./callable.h"
+
 
 class environment {
 public:
@@ -25,9 +27,7 @@ public:
         }
         return *this;
     }
-    ~environment(){
-        delete this->closing;
-    }
+    ~environment();
     void define(const std::string&key,std::any value); // defines a value to a key
     void assign(const std::string&key,std::any value); // asigns a value to a key
     std::any get(const std::string&key); // gets the value from the table

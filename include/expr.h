@@ -16,6 +16,7 @@ class Grouping;
 class Assign;
 class Conditional;
 class Logical;
+class Call;
 
 class Expression {
 public:
@@ -31,7 +32,8 @@ public:
         virtual std::any visitAssignExpression(Assign*ass);
         virtual std::any visitConditionalExpression(Conditional*con);
         virtual std::any visitLogicalExpression(Logical* lor);
-        
+        virtual std::any visitCallExpression(Call* callme);
+
         std::string astprinter(Expression*exp) {
             return stdany_to_string(exp->accept(*this));
         }
@@ -260,4 +262,25 @@ public:
         delete right;
         delete left;
     }
+};
+
+class Call : public Expression {
+public:
+    Expression* callee;
+    Token paren;
+    std::vector<Expression*> args;
+    explicit Call(Token op,std::vector<Expression*>&a,Expression* callee) : paren(op) , args(a){
+        this->callee = callee;
+    }
+    virtual std::any accept(Visitor&visitor) override final{
+        return visitor.visitCallExpression(this);
+    }
+    virtual std::any acceptRPN(VisitorRPN&visitor){
+        (void)visitor;
+        return nullptr;
+    }
+    virtual ~Call() final {
+        delete callee;
+        for(Expression* expr:args) delete expr;
+    }   
 };

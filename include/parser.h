@@ -51,8 +51,10 @@
         comparison     → term       ( ( ">"  | ">=" ) term       )* ;
         term           → factor     ( ( "-"  | "+"  ) factor     )* ;
         factor         → unary      ( ( "/"  | "*" | '%' ) unary      )* ;
-        unary          → ( "!" | "-" ) unary
-                        | primary ;
+        unary          → ( "!" | "-" ) unary 
+                        | call ;
+        call           → primary ( "(" arguments ")" )*  ;
+        arguments      → expression ( "," expression )*  ;
         primary        → NUMBER | STRING | "true" | "false" | "nil" | IDENTIFIER
                         | "(" expression ( "," expression )* ")" ;
 
@@ -104,6 +106,8 @@ private:
     Expression* term();
     Expression* factor();
     Expression* unary();
+    Expression* call();
+    Expression* get_call(std::unique_ptr<Expression>&caller);
     Expression* primary();
     Expression* assignement();
     Expression* logic_or();

@@ -2,6 +2,9 @@
 #include "./expr.h"
 #include "./statement.h"
 #include "./environment.h"
+#include "./callable.h"
+
+class environment;
 
 class Interpreter : public Expression::Visitor , public Statement::Visitor {
 private:
@@ -11,6 +14,7 @@ private:
 
     virtual std::any visitLiteralExpression(Literal*lit) override;
     virtual std::any visitUnaryExpression(Unary*una) override;
+    virtual std::any visitCallExpression(Call* callme) override;
     virtual std::any visitBinaryExpression(Binary*bin) override;
     virtual std::any visitGroupingExpression(Grouping*gro) override;
     virtual std::any visitVariableExpression(Variable*var) override;
@@ -66,13 +70,8 @@ public:
     void Interpret(Expression* expr);
     void InterpretProgram(std::vector<Statement*>& stmt);
 
-    Interpreter(bool repl = false){
-        this->env = new environment();
-        this->REPL = repl;
-    }
-    ~Interpreter(){
-        delete this->env;
-    }
+    Interpreter(bool repl = false);
+    ~Interpreter();
 };
 
 bool operator==(std::any obj1,std::any obj2);

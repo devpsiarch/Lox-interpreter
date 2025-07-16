@@ -1,0 +1,5 @@
+// test calling 
+print "hello";
+print clock();
+var result = something(); // expected 'function not defined'
+

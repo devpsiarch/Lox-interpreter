@@ -1,11 +1,18 @@
 #include "../include/expr.h"
 
+// most of these functionality are boilerplate.
+// in the early stages of dev they were a debuggin mech
+// 
+
 std::any Expression::Visitor::visitLiteralExpression(Literal*lit){
     if(!lit->value.has_value()) return "nil";
     return stdany_to_string(lit->value);
 }
 std::any Expression::Visitor::visitUnaryExpression(Unary*uni){
    return this->parenthensize(uni->op.lexeme,uni->right); 
+}
+std::any Expression::Visitor::visitCallExpression(Call* callme){
+   return this->parenthensize(callme->paren.lexeme,callme->callee); 
 }
 std::any Expression::Visitor::visitBinaryExpression(Binary*bin){
    return this->parenthensize(bin->op.lexeme,bin->right,bin->left); 
@@ -34,6 +41,7 @@ std::any Expression::VisitorRPN::visitLiteralExpression(Literal*lit){
 std::any Expression::VisitorRPN::visitUnaryExpression(Unary*uni){
    return this->parenthensize(uni->op.lexeme,uni->right); 
 }
+
 std::any Expression::VisitorRPN::visitBinaryExpression(Binary*bin){
    return this->parenthensize(bin->op.lexeme,bin->right,bin->left); 
 }

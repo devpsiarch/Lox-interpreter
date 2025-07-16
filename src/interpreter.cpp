@@ -100,6 +100,27 @@ std::any Interpreter::visitUnaryExpression(Unary*una){
     // we catch invalid types
     return nullptr;
 }
+
+std::any Interpreter::visitCallExpression(Call* callme){
+    std::any callee = this->evaluate(callme->callee);
+    std::vector<std::any> parem;
+    for(Expression* expr:callme->args){
+        parem.push_back(this->evaluate(expr));
+    }
+    Callable* function = std::any_cast<Callable*>(callee);
+    if(function == nullptr){
+        throw RunTimeError(callme->paren,"Object is not callabel, check your types.");
+    }
+    if(function->getArity() != (int)parem.size()){
+        std::string err_msg = "Expected ";
+        err_msg += std::to_string(parem.size());
+        err_msg += " but gotten ";
+        err_msg += std::to_string(function->getArity());
+        throw RunTimeError(callme->paren,err_msg.c_str());
+    }
+    return function->Call(*this,parem);
+}
+
 std::any Interpreter::visitBinaryExpression(Binary*bin) {
     std::any l = this->evaluate(bin->left);
     std::any r = this->evaluate(bin->right);
@@ -381,20 +402,31 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
             }
             this->execute(st);
         }
-
+        goto defer;
     }catch(const ControlFlow&outofloop){
         std::string err_msg = "SymanticError: ";
         err_msg += (outofloop.op.type == TokenType::BREAK) ? "break" : "continue";
         err_msg += " outside of a loop.";
         Logger::error(outofloop.op.line,outofloop.op.col,err_msg);
+        goto defer;
     }catch(const RunTimeError&e){
-        for(Statement* st:stmt){
-            delete st; 
-        }
         std::string err_msg = e.what();
         Logger::error(e.faulty_op.line,e.faulty_op.col,err_msg);
+        goto defer;
     }
+    defer:
     for(Statement* st:stmt){
         delete st; 
     }
+}
+
+
+Interpreter::Interpreter(bool repl){
+    this->env = new environment();
+    Callable* clock_func = new ClockCallable();
+    this->env->define("clock",clock_func);
+    this->REPL = repl;
+}
+Interpreter::~Interpreter(){
+    delete this->env;
 }

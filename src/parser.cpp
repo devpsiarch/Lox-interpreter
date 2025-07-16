@@ -190,9 +190,49 @@ Expression* parser::unary(){
         Token op = this->previous();
         return new Unary(op,this->unary());
     }else{
-        return this->primary();
+        return this->call();
     }
 }
+
+Expression* parser::call(){
+    std::unique_ptr<Expression> pri(this->primary());
+    std::unique_ptr<Expression> calling;
+    while(true){
+        if(this->match(TokenType::LEFT_PAREN)){
+            calling.reset(this->get_call(pri));
+        }else{
+            break;
+        }
+    }
+    if(calling){
+        return calling.release();
+    }else{
+        return pri.release();
+    }
+}
+
+Expression* parser::get_call(std::unique_ptr<Expression>&caller){
+    std::vector<Expression*> args;
+    if(!this->check(TokenType::RIGHT_PAREN)){
+        do {
+            // we impose a max number of arguments passed to a function let it be 255 
+            if(args.size() >= 255){
+                std::string err_msg = "Exceeded max number of arguments <255>.";
+                Logger::error(this->previous().line,this->previous().col,err_msg);
+                break;
+            }
+            try{
+                args.push_back(this->expression()); 
+            }catch(...){
+                for(Expression* expr:args) delete expr;
+                throw;
+            }
+        } while(this->match(TokenType::COMMA));
+    }
+    this->consume(TokenType::RIGHT_PAREN,"Expected \')\' after function call.");
+    return new Call(this->previous(),args,caller.release());
+}
+
 Expression* parser::primary(){
     if(this->match(TokenType::FALSE)) return new Literal(false);
     if(this->match(TokenType::TRUE)) return new Literal(true);

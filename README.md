@@ -20,6 +20,7 @@ Next steps will include:
 
 - Function definitions and calls
 - Better REPL features (history ...etc).
+- IO / interaction with OS throught predefined functions.
 - FFI to execute libc functionality.
 - Multithreading feature.
 

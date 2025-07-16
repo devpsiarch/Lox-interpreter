@@ -16,7 +16,7 @@ int main(int argc,char *argv[]){
         Expression::Visitor v;
         Expression::VisitorRPN vr;
         (void)vr;
-        Lexer l = Lexer(read_file("lox_examples/loops.lox"));
+        Lexer l = Lexer(read_file("lox_examples/func.lox"));
         l.scanSource();
         parser p = parser(l.tokens);
         std::vector<Statement*> stmnt =  p.parserProgram();
