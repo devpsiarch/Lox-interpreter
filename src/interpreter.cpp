@@ -107,15 +107,22 @@ std::any Interpreter::visitCallExpression(Call* callme){
     for(Expression* expr:callme->args){
         parem.push_back(this->evaluate(expr));
     }
-    Callable* function = std::any_cast<Callable*>(callee);
-    if(function == nullptr){
-        throw RunTimeError(callme->paren,"Object is not callabel, check your types.");
+    Callable* function;
+    try {
+        function = std::any_cast<Callable*>(callee);
+        if(function == nullptr){
+            throw RunTimeError(callme->paren,"Object is not callable, check your types.");
+        }
+    }catch(...){
+        throw RunTimeError(callme->paren,"Could not bind the function name.");
     }
     if(function->getArity() != (int)parem.size()){
-        std::string err_msg = "Expected ";
-        err_msg += std::to_string(parem.size());
-        err_msg += " but gotten ";
+        std::string err_msg = "Argument count missmatch for ";
+        err_msg += function->toString();
+        err_msg += " Expected ";
         err_msg += std::to_string(function->getArity());
+        err_msg += " but gotten ";
+        err_msg += std::to_string(parem.size());
         throw RunTimeError(callme->paren,err_msg.c_str());
     }
     return function->Call(*this,parem);
@@ -281,8 +288,8 @@ std::any Interpreter::visitDeclareStatement(DeclareStatement* dstmt){
     }
 }
 
-void Interpreter::executeBlock(std::vector<Statement*>&stmts){
-    environment* child = new environment();
+void Interpreter::executeBlock(std::vector<Statement*>&stmts,environment*venv = nullptr){
+    environment* child = (venv == nullptr) ? new environment() : venv;
     child->closing = this->env;
     this->env = child;
     try {
@@ -376,6 +383,13 @@ std::any Interpreter::visitContinueStatement(ContinueStatement* cstmt){
     return nullptr;
 }
 
+
+std::any Interpreter::visitFunStatement(FunStatement* funstmt){
+    Callable* f = new Function(funstmt);
+    this->env->define(funstmt->name.lexeme,f);
+    return nullptr;
+}
+
 // we dont use this any more as a defacto 
 void Interpreter::Interpret(Expression* expr){
     try {
@@ -416,7 +430,10 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
     }
     defer:
     for(Statement* st:stmt){
-        delete st; 
+        // we dont delete the function declaration statements 
+        // since they are deleted when the interepretation for 
+        // some scope dies
+        if(dynamic_cast<FunStatement*>(st) == nullptr) delete st; 
     }
 }
 

@@ -11,7 +11,7 @@ class WhileStatement;
 class ForStatement;
 class BreakStatement;
 class ContinueStatement;
-
+class FunStatement;
 
 class Statement {
 public:
@@ -26,6 +26,8 @@ public:
         virtual std::any visitForStatement(ForStatement* fstmt);
         virtual std::any visitBreakStatement(BreakStatement* brstmt);
         virtual std::any visitContinueStatement(ContinueStatement* cstmt);
+        virtual std::any visitFunStatement(FunStatement* funstmt);
+
     };
     virtual std::any accept(Visitor& visitor) = 0;
     virtual ~Statement() = default;
@@ -169,4 +171,20 @@ public:
         return visitor.visitContinueStatement(this);
     }   
     virtual ~ContinueStatement() = default;
+};
+
+class FunStatement : public Statement {
+public:
+    Token name;
+    std::vector<Token> params;
+    BlockStatement* body;
+    explicit FunStatement(Token op,std::vector<Token>&pars,BlockStatement* body) : name(op) , params(pars) {
+        this->body = body;
+    }
+    virtual std::any accept(Visitor& visitor) override final {
+        return visitor.visitFunStatement(this);
+    }   
+    virtual ~FunStatement(){
+        delete body;
+    }
 };

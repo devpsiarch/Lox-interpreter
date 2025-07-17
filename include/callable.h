@@ -1,5 +1,6 @@
 #pragma once
 #include "./interpreter.h"
+#include "./environment.h"
 #include <chrono>
 
 class Interpreter;
@@ -28,7 +29,7 @@ public:
                          system_clock::now().time_since_epoch()
                       ).count();
         // return seconds as a double
-        // from unix epoch (1/1/1970 00:00)
+        // from unix epoch (1/1/1970)
         return static_cast<double>(now_ms) / 1000.0;
   }
 
@@ -36,4 +37,20 @@ public:
         return "<native fn>";
     }
     virtual ~ClockCallable() = default;
+};
+
+
+class Function : public Callable {
+public:
+    explicit Function(FunStatement* stmts);
+    Function(const Function& other) = delete;
+    Function& operator=(const Function& other) = delete;
+
+    virtual std::any Call(Interpreter& inter, const std::vector<std::any>& args) override;
+    virtual int getArity() const override;
+    virtual std::string toString() const override;
+    virtual ~Function();
+
+private:
+    FunStatement* declaration;
 };

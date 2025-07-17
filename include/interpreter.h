@@ -3,6 +3,7 @@
 #include "./statement.h"
 #include "./environment.h"
 #include "./callable.h"
+#include "./function.h"
 
 class environment;
 
@@ -31,6 +32,7 @@ private:
     virtual std::any visitForStatement(ForStatement* fstmt) override;
     virtual std::any visitBreakStatement(BreakStatement* brstmt) override;
     virtual std::any visitContinueStatement(ContinueStatement* cstmt) override;
+    virtual std::any visitFunStatement(FunStatement* funstmt) override;
     
     bool isEqual(std::any obj1,std::any obj2); 
     
@@ -64,9 +66,9 @@ private:
     static bool isTruthy(std::any obj);
     std::any evaluate(Expression* expr);
     void execute(Statement* st);
-    void executeBlock(std::vector<Statement*>&stmts);   
 
 public:
+    void executeBlock(std::vector<Statement*>&stmts,environment* venv);   
     void Interpret(Expression* expr);
     void InterpretProgram(std::vector<Statement*>& stmt);
 

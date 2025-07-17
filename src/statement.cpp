@@ -41,3 +41,7 @@ std::any Statement::Visitor::visitContinueStatement(ContinueStatement* cstmt){
     (void)cstmt;
     return nullptr;
 }
+std::any Statement::Visitor::visitFunStatement(FunStatement* funstmt){
+    (void)funstmt;
+    return nullptr;
+}

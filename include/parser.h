@@ -10,8 +10,14 @@
 
         program        → declaration* EOFF ;
 
-        declaration    → varDeclare | statement ;
-    
+        declaration    → varDeclare | statement | funDeclare ;
+   
+        funDeclare     → "fun" function  ;
+
+        function       → IDENTIFIER '(' parameters? ')' blockstatement; 
+
+        parameters     → IDENTIFIER ( ',' IDENTIFIER )*  ;
+
         statement      → exprStmt | printStmt | block | 
                         if_statement | while_statement | for_statement | 
                         break_statement | continue_statement;
@@ -124,7 +130,7 @@ private:
     Statement* for_statement();
     Statement* break_statement();
     Statement* continue_statement();
-
+    Statement* function_statement();
 
     std::vector<Statement*> block_statement();
 

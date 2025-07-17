@@ -264,6 +264,7 @@ Expression* parser::primary(){
 }
 
 Statement* parser::statement(){
+    if(this->match(TokenType::FUN)) return this->function_statement();
     if(this->match(TokenType::BREAK)) return this->break_statement();
     if(this->match(TokenType::CONTINUE)) return this->continue_statement();
     if(this->match(TokenType::FOR)) return this->for_statement();
@@ -407,7 +408,12 @@ std::vector<Statement*> parser::block_statement(){
     while(!this->isAtEnd() && !this->check(TokenType::RIGHT_BRACE)){
         result.push_back(this->declaration());
     }
-    this->consume(TokenType::RIGHT_BRACE,"Expected \'}\' at end of a block.");
+    try {
+        this->consume(TokenType::RIGHT_BRACE,"Expected \'}\' at end of a block.");
+    }catch(...){
+        for(Statement* st:result) delete st;
+        throw;
+    }
     return result;
 }
 
@@ -433,6 +439,35 @@ void parser::synchronize(void){
     }
 }
 
+Statement* parser::function_statement(){
+    Token funName = this->consume(TokenType::IDENTIFIER,
+                "Expected function name after declaration.");
+    this->consume(TokenType::LEFT_PAREN,
+                "Expected \'(\' after the function name");
+    std::vector<Token> params;
+    // we get the parameters
+    if(!this->check(TokenType::RIGHT_PAREN)){
+        do {
+            if(params.size() >= 255){
+                std::string err_msg = 
+                    "Exceeded max number of arguments <255>.";
+                Logger::error(this->previous().line,
+                              this->previous().col,err_msg);
+                break;
+            }
+            params.push_back(this->consume(TokenType::IDENTIFIER,
+                "Expected parameter in function call.")); 
+        } while(this->match(TokenType::COMMA));
+    }
+    this->consume(TokenType::RIGHT_PAREN,
+            "Expected \')\' after function parameters.");
+     this->consume(TokenType::LEFT_BRACE,
+            "Expected \'{\' before function block.");   
+    std::vector<Statement*> result = this->block_statement();
+    BlockStatement* raw = new BlockStatement(result);
+    return new FunStatement(funName,params,raw); 
+}
+// NOTE: we dont use this anymore
 Expression* parser::parse(){
     try {
         return expression();
