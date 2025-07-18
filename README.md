@@ -15,10 +15,10 @@ Currently, the interpreter supports:
 - Adding support for grouping, comparison, and equality operators
 - Implementing variables and environments
 - Supporting control flow (`if`, `while`, etc.)
+- Function definitions and calls
 
 Next steps will include:
 
-- Function definitions and calls
 - Better REPL features (history ...etc).
 - IO / interaction with OS throught predefined functions.
 - FFI to execute libc functionality.
@@ -32,8 +32,7 @@ Next steps will include:
 
 ## 🧠 Motivation
 
-I'm building this interpreter to deeply understand how programming languages work, from source code to execution. The *Crafting Interpreters* book has been a fantastic guide, and this repo is both a learning exercise and a stepping stone toward more advanced language and interpreter design.
-
+I'm building this interpreter to deeply understand how programming languages work, from source code to execution.i choose to write a interpreter for a already designed programming language, while not a perfect replica but adding what i please in features and writing my own when ready. 
 ## 📚 Reference
 
 - [Crafting Interpreters by Bob Nystrom](https://craftinginterpreters.com/)
