@@ -18,6 +18,7 @@ private:
     virtual std::any visitCallExpression(Call* callme) override;
     virtual std::any visitBinaryExpression(Binary*bin) override;
     virtual std::any visitGroupingExpression(Grouping*gro) override;
+    virtual std::any visitCommaExpression(Comma*com) override;
     virtual std::any visitVariableExpression(Variable*var) override;
     virtual std::any visitAssignExpression(Assign*ass) override;
     virtual std::any visitConditionalExpression(Conditional*con) override;

@@ -13,6 +13,7 @@ class Unary;
 class Binary;
 class Variable;
 class Grouping;
+class Comma;
 class Assign;
 class Conditional;
 class Logical;
@@ -28,6 +29,7 @@ public:
         virtual std::any visitUnaryExpression(Unary*una);
         virtual std::any visitBinaryExpression(Binary*bin);
         virtual std::any visitGroupingExpression(Grouping*gro);
+        virtual std::any visitCommaExpression(Comma*com);
         virtual std::any visitVariableExpression(Variable*var);
         virtual std::any visitAssignExpression(Assign*ass);
         virtual std::any visitConditionalExpression(Conditional*con);
@@ -181,6 +183,27 @@ public:
     }
     virtual ~Grouping() final {
         delete expression;
+    }
+};
+
+class Comma : public Expression {
+public:
+    std::vector<Expression*> list;
+    explicit Comma(std::vector<Expression*>&other) : list(other){
+        for(size_t i = 0 ; i < (size_t)other.size() ; ++i){
+            // we take responsibility for them from now on
+            other[i] = nullptr;
+        } 
+    }
+    virtual std::any accept(Visitor&visitor) override final{
+        return visitor.visitCommaExpression(this);
+    }
+    virtual std::any acceptRPN(VisitorRPN&visitor){
+        (void)visitor;
+        return nullptr;
+    }
+    virtual ~Comma() final {
+        for(Expression*expr:list) delete expr; 
     }
 };
 

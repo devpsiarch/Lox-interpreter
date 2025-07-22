@@ -245,20 +245,23 @@ Expression* parser::primary(){
         std::unique_ptr<Expression> expr (this->expression());
         try {
             if(this->check(TokenType::COMMA)){
+                std::vector<Expression*> list;
+                list.push_back(expr.release());
                 while(!this->check(TokenType::RIGHT_PAREN)){
                     this->consume(TokenType::COMMA,"Missing \',\' in comma expression.");
-                    // NOTE: we are supposed to evaluate the the expressions in the 
-                    // comma expression , and only return the most right one
-                    expr.reset(this->expression());
+                    list.push_back(this->expression());
                 }
+                this->consume(TokenType::RIGHT_PAREN,"expcted \')\' before end of expression.");
+                return new Comma(list);
+            }else{
+                this->consume(TokenType::RIGHT_PAREN,"expcted \')\' before end of expression.");
+                return new Grouping(expr.release());
             }
             
-            this->consume(TokenType::RIGHT_PAREN,"expcted \')\' before end of expression.");
         }catch(const parserError&e){
             std::string err_msg = e.what();
             Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
         }
-        return new Grouping(expr.release());
     }
     throw parserError(this->peek(),"expected expression.");
 }

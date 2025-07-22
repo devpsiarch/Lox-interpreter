@@ -209,6 +209,12 @@ std::any Interpreter::visitGroupingExpression(Grouping*gro) {
     return this->evaluate(gro->expression);
 }
 
+std::any Interpreter::visitCommaExpression(Comma*com){
+    for(size_t i = 0 ; i < (size_t)com->list.size()-1 ; i++){
+        this->evaluate(com->list[i]);
+    }
+    return this->evaluate(com->list[com->list.size()-1]);
+}
 
 std::any Interpreter::visitVariableExpression(Variable*var){
     try {

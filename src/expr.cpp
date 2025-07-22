@@ -20,6 +20,9 @@ std::any Expression::Visitor::visitBinaryExpression(Binary*bin){
 std::any Expression::Visitor::visitGroupingExpression(Grouping*gro){
    return this->parenthensize("group",gro->expression); 
 }
+std::any Expression::Visitor::visitCommaExpression(Comma*com){
+   return this->parenthensize("comma",com->list[com->list.size()-1]); 
+}
 // place holder fr , idk what to fill these with 
 // i assume they look ok in the notaion but am not sure
 std::any Expression::Visitor::visitVariableExpression(Variable*var){
