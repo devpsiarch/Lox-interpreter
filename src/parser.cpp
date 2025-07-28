@@ -267,6 +267,7 @@ Expression* parser::primary(){
 }
 
 Statement* parser::statement(){
+    if(this->match(TokenType::RETURN)) return this->return_statement();
     if(this->match(TokenType::FUN)) return this->function_statement();
     if(this->match(TokenType::BREAK)) return this->break_statement();
     if(this->match(TokenType::CONTINUE)) return this->continue_statement();
@@ -470,6 +471,16 @@ Statement* parser::function_statement(){
     BlockStatement* raw = new BlockStatement(result);
     return new FunStatement(funName,params,raw); 
 }
+
+Statement* parser::return_statement(){
+    std::unique_ptr<Expression> expr;
+    if(!this->check(TokenType::SEMICOLEN)){
+        expr.reset(this->expression());
+    }
+    this->consume(TokenType::SEMICOLEN,"Expected \';\' after a return statement.");
+    return new ReturnStatement(expr.release());
+}
+
 // NOTE: we dont use this anymore
 Expression* parser::parse(){
     try {

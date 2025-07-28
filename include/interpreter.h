@@ -34,6 +34,7 @@ private:
     virtual std::any visitBreakStatement(BreakStatement* brstmt) override;
     virtual std::any visitContinueStatement(ContinueStatement* cstmt) override;
     virtual std::any visitFunStatement(FunStatement* funstmt) override;
+    virtual std::any visitReturnStatement(ReturnStatement* retstmt) override;
     
     bool isEqual(std::any obj1,std::any obj2); 
     
@@ -57,13 +58,34 @@ private:
         }
     };
     
-    class ControlFlow {
+    // the name might be missleading but this class accualy refers to 
+    // the "break" and "continue" statements.
+    // am too lazy to find a better name fore them then this but hey
+    // just know these are expections that we throw then catch (if possible)
+    // to excape from an arbirarly nested statements or else crash since only 
+    // applicable in loops
+    public: class ControlFlow : std::exception {
     public:
         Token op;
         ControlFlow(Token op) : op(op){}
         ~ControlFlow() = default;
+        const char* what() const noexcept override{
+            return "ControlFlow statement expection";
+        }
     };
-
+    
+    // this does a similar job as the above , it allows us to return a value 
+    // from an arbitrarly nested statements inside a function 'only'
+    public: class ReturnFlow : public std::exception {
+    public:   
+        std::any ret_value;
+        ReturnFlow(std::any value) : ret_value(value){}
+        ~ReturnFlow() = default;
+        const char* what() const noexcept override{
+            return "ReturnFlow statement expection";
+        }
+    };
+private:
     static bool isTruthy(std::any obj);
     std::any evaluate(Expression* expr);
     void execute(Statement* st);

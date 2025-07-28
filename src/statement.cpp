@@ -45,3 +45,7 @@ std::any Statement::Visitor::visitFunStatement(FunStatement* funstmt){
     (void)funstmt;
     return nullptr;
 }
+std::any Statement::Visitor::visitReturnStatement(ReturnStatement* retstmt){
+    (void)retstmt;
+    return nullptr;
+}

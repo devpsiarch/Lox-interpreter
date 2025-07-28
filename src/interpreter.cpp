@@ -389,11 +389,16 @@ std::any Interpreter::visitContinueStatement(ContinueStatement* cstmt){
     return nullptr;
 }
 
-
 std::any Interpreter::visitFunStatement(FunStatement* funstmt){
     Callable* f = new Function(funstmt);
     this->env->define(funstmt->name.lexeme,f);
     return nullptr;
+}
+
+std::any Interpreter::visitReturnStatement(ReturnStatement* retstmt){
+    if(retstmt->retvalue == nullptr) 
+        throw ReturnFlow(nullptr);
+    throw ReturnFlow(this->evaluate(retstmt->retvalue));
 }
 
 // we dont use this any more as a defacto 

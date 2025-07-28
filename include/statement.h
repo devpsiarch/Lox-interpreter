@@ -12,6 +12,7 @@ class ForStatement;
 class BreakStatement;
 class ContinueStatement;
 class FunStatement;
+class ReturnStatement;
 
 class Statement {
 public:
@@ -27,6 +28,7 @@ public:
         virtual std::any visitBreakStatement(BreakStatement* brstmt);
         virtual std::any visitContinueStatement(ContinueStatement* cstmt);
         virtual std::any visitFunStatement(FunStatement* funstmt);
+        virtual std::any visitReturnStatement(ReturnStatement* retstmt);
 
     };
     virtual std::any accept(Visitor& visitor) = 0;
@@ -185,6 +187,20 @@ public:
         return visitor.visitFunStatement(this);
     }   
     virtual ~FunStatement(){
-        delete body;
+        delete this->body;
+    }
+};
+
+class ReturnStatement : public Statement {
+public:
+    Expression* retvalue;
+    explicit ReturnStatement(Expression* expr = nullptr){
+        this->retvalue = expr;
+    }
+    virtual std::any accept(Visitor& visitor) override final {
+        return visitor.visitReturnStatement(this);
+    }   
+    virtual ~ReturnStatement(){
+        delete this->retvalue;
     }
 };

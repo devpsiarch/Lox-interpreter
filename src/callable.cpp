@@ -22,7 +22,11 @@ std::any Function::Call(Interpreter& inter, const std::vector<std::any>& args){
         const Token& t = declaration->params[i];
         f->define(t.lexeme, args[i]);
     }
-    inter.executeBlock(declaration->body->stmts, f);
+    try {
+        inter.executeBlock(declaration->body->stmts, f);
+    }catch(const Interpreter::ReturnFlow&e){
+        return e.ret_value;
+    }
     return nullptr;
 }
 

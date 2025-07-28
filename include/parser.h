@@ -20,7 +20,9 @@
 
         statement      → exprStmt | printStmt | block | 
                         if_statement | while_statement | for_statement | 
-                        break_statement | continue_statement;
+                        break_statement | continue_statement | return_statement;
+
+        return_statement → "return" expression? ';' ;
 
         blockstatement → '{' declaration* '}' ;
 
@@ -131,6 +133,7 @@ private:
     Statement* break_statement();
     Statement* continue_statement();
     Statement* function_statement();
+    Statement* return_statement();
 
     std::vector<Statement*> block_statement();
 
