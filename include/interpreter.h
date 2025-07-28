@@ -78,8 +78,9 @@ private:
     // from an arbitrarly nested statements inside a function 'only'
     public: class ReturnFlow : public std::exception {
     public:   
+        Token op;
         std::any ret_value;
-        ReturnFlow(std::any value) : ret_value(value){}
+        ReturnFlow(std::any value,Token&op) : op(op) , ret_value(value) {}
         ~ReturnFlow() = default;
         const char* what() const noexcept override{
             return "ReturnFlow statement expection";

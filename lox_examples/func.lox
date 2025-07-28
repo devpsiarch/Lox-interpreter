@@ -3,9 +3,10 @@ print "begining of the program....";
 
 fun test() {
     print "we are inside test";
-    return ;
+    return 50;
 }
 
 var x = test();
 print x;
+return 1;
 print "end of the program....";

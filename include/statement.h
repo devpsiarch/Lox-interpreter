@@ -194,7 +194,8 @@ public:
 class ReturnStatement : public Statement {
 public:
     Expression* retvalue;
-    explicit ReturnStatement(Expression* expr = nullptr){
+    Token op;
+    explicit ReturnStatement(Token op,Expression* expr = nullptr) : op(op){
         this->retvalue = expr;
     }
     virtual std::any accept(Visitor& visitor) override final {

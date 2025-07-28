@@ -478,7 +478,7 @@ Statement* parser::return_statement(){
         expr.reset(this->expression());
     }
     this->consume(TokenType::SEMICOLEN,"Expected \';\' after a return statement.");
-    return new ReturnStatement(expr.release());
+    return new ReturnStatement(this->peek(),expr.release());
 }
 
 // NOTE: we dont use this anymore

@@ -397,8 +397,8 @@ std::any Interpreter::visitFunStatement(FunStatement* funstmt){
 
 std::any Interpreter::visitReturnStatement(ReturnStatement* retstmt){
     if(retstmt->retvalue == nullptr) 
-        throw ReturnFlow(nullptr);
-    throw ReturnFlow(this->evaluate(retstmt->retvalue));
+        throw ReturnFlow(nullptr,retstmt->op);
+    throw ReturnFlow(this->evaluate(retstmt->retvalue),retstmt->op);
 }
 
 // we dont use this any more as a defacto 
@@ -427,6 +427,10 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
             }
             this->execute(st);
         }
+        goto defer;
+    }catch(const ReturnFlow&outoffunc){
+        std::string err_msg = "SymanticError: return outside of a loop.";
+        Logger::error(outoffunc.op.line,outoffunc.op.col,err_msg);
         goto defer;
     }catch(const ControlFlow&outofloop){
         std::string err_msg = "SymanticError: ";
