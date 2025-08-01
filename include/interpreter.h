@@ -1,9 +1,8 @@
 #pragma once
 #include "./expr.h"
 #include "./statement.h"
-#include "./environment.h"
+#include "./environment.h" 
 #include "./callable.h"
-#include "./function.h"
 
 class environment;
 
@@ -95,6 +94,8 @@ public:
     void executeBlock(std::vector<Statement*>&stmts,environment* venv);   
     void Interpret(Expression* expr);
     void InterpretProgram(std::vector<Statement*>& stmt);
+
+    environment* copy_env();
 
     Interpreter(bool repl = false);
     ~Interpreter();

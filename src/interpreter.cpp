@@ -390,7 +390,7 @@ std::any Interpreter::visitContinueStatement(ContinueStatement* cstmt){
 }
 
 std::any Interpreter::visitFunStatement(FunStatement* funstmt){
-    Callable* f = new Function(funstmt);
+    Callable* f = new Function(funstmt,this->env);
     this->env->define(funstmt->name.lexeme,f);
     return nullptr;
 }
@@ -461,4 +461,8 @@ Interpreter::Interpreter(bool repl){
 }
 Interpreter::~Interpreter(){
     delete this->env;
+}
+
+environment* Interpreter::copy_env(){
+    return new environment(*this->env);
 }

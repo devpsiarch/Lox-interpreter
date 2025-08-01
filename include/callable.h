@@ -4,6 +4,7 @@
 #include <chrono>
 
 class Interpreter;
+class environment;
 
 class Callable {
 public:
@@ -42,7 +43,7 @@ public:
 
 class Function : public Callable {
 public:
-    explicit Function(FunStatement* stmts);
+    explicit Function(FunStatement* stmts,environment* borrowed_env);
     Function(const Function& other) = delete;
     Function& operator=(const Function& other) = delete;
 
@@ -53,4 +54,5 @@ public:
 
 private:
     FunStatement* declaration;
+    environment* colosure;
 };

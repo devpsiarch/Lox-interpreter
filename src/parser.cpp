@@ -1,5 +1,4 @@
 #include "../include/parser.h"
-#include "../include/interpreter.h"
 
 parser::parser(const std::vector<Token>&toks){
     this->current = 0;
