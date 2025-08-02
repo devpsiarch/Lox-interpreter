@@ -409,7 +409,10 @@ Statement* parser::continue_statement(){
 std::vector<Statement*> parser::block_statement(){
     std::vector<Statement*> result;
     while(!this->isAtEnd() && !this->check(TokenType::RIGHT_BRACE)){
-        result.push_back(this->declaration());
+        std::unique_ptr<Statement> st(this->declaration());
+        if(dynamic_cast<FunStatement*>(st.get()) != nullptr)
+            throw parserError(this->peek(),"cant have nested functions declarations."); 
+        result.push_back(st.release());
     }
     try {
         this->consume(TokenType::RIGHT_BRACE,"Expected \'}\' at end of a block.");
@@ -467,8 +470,7 @@ Statement* parser::function_statement(){
      this->consume(TokenType::LEFT_BRACE,
             "Expected \'{\' before function block.");   
     std::vector<Statement*> result = this->block_statement();
-    BlockStatement* raw = new BlockStatement(result);
-    return new FunStatement(funName,params,raw); 
+    return new FunStatement(funName,params,result); 
 }
 
 Statement* parser::return_statement(){

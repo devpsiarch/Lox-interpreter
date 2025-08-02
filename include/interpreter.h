@@ -95,8 +95,6 @@ public:
     void Interpret(Expression* expr);
     void InterpretProgram(std::vector<Statement*>& stmt);
 
-    environment* copy_env();
-
     Interpreter(bool repl = false);
     ~Interpreter();
 };

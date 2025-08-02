@@ -179,15 +179,16 @@ class FunStatement : public Statement {
 public:
     Token name;
     std::vector<Token> params;
-    BlockStatement* body;
-    explicit FunStatement(Token op,std::vector<Token>&pars,BlockStatement* body) : name(op) , params(pars) {
-        this->body = body;
-    }
+    std::vector<Statement*> body;
+    explicit FunStatement(Token op,std::vector<Token>&pars,std::vector<Statement*>&body) : name(op) 
+        , params(pars) , body(body){}
     virtual std::any accept(Visitor& visitor) override final {
         return visitor.visitFunStatement(this);
     }   
     virtual ~FunStatement(){
-        delete this->body;
+        for(Statement*st:this->body){
+            delete st;
+        }
     }
 };
 

@@ -18,19 +18,20 @@ std::string Callable::toString() const{
 
 // we are adding "closures" to functions , as in a function keeps track of its "global"
 // variables when delcared inside another function (bit crazy but some ppl like this shit)
-Function::Function(FunStatement* stmts,environment* borrowed_env){
+Function::Function(FunStatement* stmts){
     this->declaration = stmts;
-    this->colosure = borrowed_env;
 }
 
 std::any Function::Call(Interpreter& inter, const std::vector<std::any>& args){
-    environment* f = new environment(*this->colosure);
+    environment* f =  new environment();
     for (size_t i = 0; i < declaration->params.size(); ++i) {
         const Token& t = declaration->params[i];
         f->define(t.lexeme, args[i]);
     }
     try {
-        inter.executeBlock(declaration->body->stmts, f);
+        // this function bellow "executeBlock" will delete the given environment after it is done
+        inter.executeBlock(declaration->body, f);
+        delete f;
     }catch(const Interpreter::ReturnFlow&e){
         return e.ret_value;
     }
@@ -49,5 +50,4 @@ std::string Function::toString() const
 
 Function::~Function(){
     delete this->declaration;
-    this->colosure = nullptr;
 }

@@ -2,6 +2,7 @@
 /* stopped at handling the checking for types when evaluating*/
 
 
+
 bool Interpreter::checkType(const std::type_info&expected,std::any obj1,std::any obj2){
     const std::type_info& l = obj1.type();
     const std::type_info& r = obj2.type();
@@ -295,9 +296,16 @@ std::any Interpreter::visitDeclareStatement(DeclareStatement* dstmt){
 }
 
 void Interpreter::executeBlock(std::vector<Statement*>&stmts,environment*venv = nullptr){
-    environment* child = (venv == nullptr) ? new environment() : venv;
+    environment* child;
+    if(venv == nullptr){
+        child = new environment();
+    }else{
+        child = venv;
+    }
+    // setting up the env stack 
     child->closing = this->env;
     this->env = child;
+    // performing the execution
     try {
         for(Statement* st:stmts){
             if(st == nullptr) break;
@@ -309,14 +317,16 @@ void Interpreter::executeBlock(std::vector<Statement*>&stmts,environment*venv = 
     }catch(...){
         // we rethrow because we are not reponsible to determine if the 
         // control statememt is coherient
-        this->env = child->closing;
-        child->closing = nullptr;
-        delete child;       
+        (env) = (child)->closing; 
+        (child)->closing = nullptr;
+        delete child;
         throw;
     }
-    this->env = child->closing;
-    child->closing = nullptr;
+    // sorry about the code ... 
+    (env) = (child)->closing; 
+    (child)->closing = nullptr;
     delete child;
+
 }
 
 std::any Interpreter::visitBlockStatement(BlockStatement* bstmt){
@@ -390,7 +400,7 @@ std::any Interpreter::visitContinueStatement(ContinueStatement* cstmt){
 }
 
 std::any Interpreter::visitFunStatement(FunStatement* funstmt){
-    Callable* f = new Function(funstmt,this->env);
+    Callable* f = new Function(funstmt);
     this->env->define(funstmt->name.lexeme,f);
     return nullptr;
 }
@@ -461,8 +471,4 @@ Interpreter::Interpreter(bool repl){
 }
 Interpreter::~Interpreter(){
     delete this->env;
-}
-
-environment* Interpreter::copy_env(){
-    return new environment(*this->env);
 }

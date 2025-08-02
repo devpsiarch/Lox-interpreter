@@ -43,7 +43,7 @@ public:
 
 class Function : public Callable {
 public:
-    explicit Function(FunStatement* stmts,environment* borrowed_env);
+    explicit Function(FunStatement* stmts);
     Function(const Function& other) = delete;
     Function& operator=(const Function& other) = delete;
 
@@ -54,5 +54,4 @@ public:
 
 private:
     FunStatement* declaration;
-    environment* colosure;
 };

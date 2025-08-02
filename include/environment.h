@@ -27,6 +27,7 @@ public:
         }
         return *this;
     }
+    void kill_but_borrowed_functions();
     ~environment();
     void define(const std::string&key,std::any value); // defines a value to a key
     void assign(const std::string&key,std::any value); // asigns a value to a key

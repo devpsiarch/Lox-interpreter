@@ -28,11 +28,24 @@ bool environment::isKeyIn(const std::string&key){
     return this->SymbolTable.find(key) != this->SymbolTable.end();
 }
 
+void environment::kill_but_borrowed_functions(){
+    for(auto it = SymbolTable.begin() ; it != SymbolTable.end();){
+        const std::type_info& t = it->second.type();
+        
+        if(t == typeid(Callable*)) {
+            // pull the Foo* out, delete it
+            Callable* p = std::any_cast<Callable*>(it->second);
+            it = SymbolTable.erase(it);
+        }else{
+            ++it;
+        }
+    }
+}
 environment::~environment(){
     for(auto it = SymbolTable.begin() ; it != SymbolTable.end();){
         const std::type_info& t = it->second.type();
-
-        if (t == typeid(Callable*)) {
+        
+        if(t == typeid(Callable*)) {
             // pull the Foo* out, delete it
             Callable* p = std::any_cast<Callable*>(it->second);
             delete p;
