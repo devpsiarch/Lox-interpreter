@@ -320,13 +320,14 @@ void Interpreter::executeBlock(std::vector<Statement*>&stmts,environment*venv = 
         (env) = (child)->closing; 
         (child)->closing = nullptr;
         delete child;
+        child = nullptr;
         throw;
     }
     // sorry about the code ... 
     (env) = (child)->closing; 
     (child)->closing = nullptr;
     delete child;
-
+    child = nullptr;
 }
 
 std::any Interpreter::visitBlockStatement(BlockStatement* bstmt){
@@ -431,7 +432,8 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
     try {
         // NOTE: for a statement to be nullptr that means that that statement is faulty 
         // because of any kind of error no matter what kind , in that case a we should stop execution
-        for(Statement* st:stmt){
+        for(size_t i = 0; i < stmt.size(); ++i){
+            auto st = stmt[i];
             if(st == nullptr){
                 break;
             }
@@ -454,11 +456,15 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
         goto defer;
     }
     defer:
-    for(Statement* st:stmt){
+    for(size_t i = 0; i < stmt.size(); ++i){
         // we dont delete the function declaration statements 
         // since they are deleted when the interepretation for 
         // some scope dies
-        if(dynamic_cast<FunStatement*>(st) == nullptr) delete st; 
+        Statement* st = stmt[i];
+        if(dynamic_cast<FunStatement*>(st) == nullptr){
+            delete st; 
+            st = nullptr;    
+        }
     }
 }
 
@@ -471,4 +477,5 @@ Interpreter::Interpreter(bool repl){
 }
 Interpreter::~Interpreter(){
     delete this->env;
+    this->env = nullptr;
 }

@@ -33,6 +33,7 @@ public:
     };
     virtual std::any accept(Visitor& visitor) = 0;
     virtual ~Statement() = default;
+    virtual void debug() {}
 };
 
 class ExpressionStatement : public Statement {
@@ -90,6 +91,7 @@ public:
     virtual ~BlockStatement() {
         for(Statement* st:this->stmts){
             delete st;
+            st = nullptr;
         } 
     }
 };
@@ -188,6 +190,7 @@ public:
     virtual ~FunStatement(){
         for(Statement*st:this->body){
             delete st;
+            st = nullptr;
         }
     }
 };

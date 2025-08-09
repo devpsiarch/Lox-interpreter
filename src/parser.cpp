@@ -223,7 +223,10 @@ Expression* parser::get_call(std::unique_ptr<Expression>&caller){
             try{
                 args.push_back(this->expression()); 
             }catch(...){
-                for(Expression* expr:args) delete expr;
+                for(Expression* expr:args){
+                    delete expr;
+                    expr = nullptr;
+                }
                 throw;
             }
         } while(this->match(TokenType::COMMA));
@@ -309,7 +312,34 @@ Statement* parser::declare_statement(){
     Token name = consume(TokenType::IDENTIFIER,"Expected variable name after declaration.");
     std::unique_ptr<Expression> value;
     if(this->match(TokenType::EQUAL)){
-        value.reset(this->expression()); 
+        // parse if we have a anymous function
+        if(this->match(TokenType::FUN)){
+            // taken from the function parsing , lol am getting sloppy
+            std::vector<Token> params;
+            // we get the parameters
+            this->consume(TokenType::LEFT_PAREN,"Expected \'(\' after the function name");
+            if(!this->check(TokenType::RIGHT_PAREN)){
+                do {
+                    if(params.size() >= 255){
+                        std::string err_msg = 
+                            "Exceeded max number of arguments <255>.";
+                        Logger::error(this->previous().line,
+                                      this->previous().col,err_msg);
+                        break;
+                    }
+                    params.push_back(this->consume(TokenType::IDENTIFIER,
+                        "Expected parameter in function definition.")); 
+                } while(this->match(TokenType::COMMA));
+            }
+            this->consume(TokenType::RIGHT_PAREN,
+                    "Expected \')\' after function parameters.");
+            this->consume(TokenType::LEFT_BRACE,
+                    "Expected \'{\' before function block.");   
+            std::vector<Statement*> result = this->block_statement();
+            return new FunStatement(name,params,result);        
+        }else{
+            value.reset(this->expression()); 
+        }
     }
     this->consume(TokenType::SEMICOLEN,"Expected \';\' after variable declaration.");
     return new DeclareStatement(name,value.release());
@@ -417,7 +447,10 @@ std::vector<Statement*> parser::block_statement(){
     try {
         this->consume(TokenType::RIGHT_BRACE,"Expected \'}\' at end of a block.");
     }catch(...){
-        for(Statement* st:result) delete st;
+        for(Statement* st:result) {
+            delete st;
+            st = nullptr;
+        }
         throw;
     }
     return result;
@@ -446,6 +479,7 @@ void parser::synchronize(void){
 }
 
 Statement* parser::function_statement(){
+    // parse the identifer that the function call binds to
     Token funName = this->consume(TokenType::IDENTIFIER,
                 "Expected function name after declaration.");
     this->consume(TokenType::LEFT_PAREN,

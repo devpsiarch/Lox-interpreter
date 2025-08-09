@@ -31,7 +31,8 @@ std::any Function::Call(Interpreter& inter, const std::vector<std::any>& args){
     try {
         // this function bellow "executeBlock" will delete the given environment after it is done
         inter.executeBlock(declaration->body, f);
-        delete f;
+        //delete f; idk why tf i am deleting here 
+        // hey , tf ur doing here ? get ur shit together
     }catch(const Interpreter::ReturnFlow&e){
         return e.ret_value;
     }
@@ -50,4 +51,5 @@ std::string Function::toString() const
 
 Function::~Function(){
     delete this->declaration;
+    this->declaration = nullptr;
 }

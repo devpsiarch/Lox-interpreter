@@ -42,6 +42,7 @@ void eval_expr(const std::string&line){
     std::string ast_str = v.astprinter(expr);
     std::cout << ast_str << '\n';
     delete expr;
+    expr = nullptr;
 }
 
 void run_line(Interpreter&inter,const std::string&line){

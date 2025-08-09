@@ -11,10 +11,14 @@
         program        → declaration* EOFF ;
 
         declaration    → varDeclare | statement | funDeclare ;
-   
+
+        varDeclare     → "var" IDENTIFIER '=' (expression | anonymous_function) ';' ;
+ 
         funDeclare     → "fun" function  ;
 
         function       → IDENTIFIER '(' parameters? ')' blockstatement; 
+
+        anonymous_function  → 'fun' '(' parameters? ')' blockstatement;
 
         parameters     → IDENTIFIER ( ',' IDENTIFIER )*  ;
 

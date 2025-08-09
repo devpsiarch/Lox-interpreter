@@ -304,6 +304,7 @@ public:
     }
     virtual ~Call() final {
         delete callee;
+        callee = nullptr;
         for(Expression* expr:args) delete expr;
     }   
 };

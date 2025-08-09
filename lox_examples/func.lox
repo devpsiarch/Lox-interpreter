@@ -1,4 +1,5 @@
 // test calling 
+
 print "begining of the program....";
 fun fibo(n) {
     if(n <= 1) return n;
@@ -8,14 +9,13 @@ fun fibo(n) {
 for(var i = 0 ; i < 10 ; i = i + 1){
     print fibo(i);
 }
-fun test() {
-    fun subtest(){
-        fun subsubtest(){
-            print "Hello brother";
-        }
-        subsubtest();
-    }
-    subtest();
+
+var test = fun (x) {
+    print x;
 }
-test();
+
+
+test(10);
+test(11);
+
 print "end of the program....";
