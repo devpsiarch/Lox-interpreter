@@ -126,6 +126,7 @@ std::any Interpreter::visitCallExpression(Call* callme){
         err_msg += std::to_string(parem.size());
         throw RunTimeError(callme->paren,err_msg.c_str());
     }
+
     return function->Call(*this,parem);
 }
 
@@ -219,7 +220,10 @@ std::any Interpreter::visitCommaExpression(Comma*com){
 
 std::any Interpreter::visitVariableExpression(Variable*var){
     try {
-        return this->env->get(var->name.lexeme);
+        // we might wanna check these stuff for the ScopeSpace later
+        // so keep the "auto package" here for now
+        auto package_back =  this->env->get(var->name.lexeme);
+        return package_back.first;
     }catch(const environment::NameError&e){
         throw RunTimeError(var->name,e.what()); 
     }
@@ -229,7 +233,7 @@ std::any Interpreter::visitVariableExpression(Variable*var){
 std::any Interpreter::visitAssignExpression(Assign*ass){
     try {
         std::any value = this->evaluate(ass->expr);
-        this->env->assign(ass->op.lexeme,value);
+        this->env->assign(ass->op.lexeme,value,ScopeSpace::LOCAL);
         return value;
     }catch(const environment::NameError&e){
         throw RunTimeError(ass->op,e.what()); 
@@ -288,7 +292,7 @@ std::any Interpreter::visitDeclareStatement(DeclareStatement* dstmt){
         if(dstmt->init != nullptr){
             value = this->evaluate(dstmt->init);
         }
-        this->env->define(dstmt->name.lexeme,value);
+        this->env->define(dstmt->name.lexeme,value,ScopeSpace::LOCAL);
         return nullptr;
     }catch(const environment::NameError&e){
        throw RunTimeError(dstmt->name,e.what());
@@ -402,7 +406,7 @@ std::any Interpreter::visitContinueStatement(ContinueStatement* cstmt){
 
 std::any Interpreter::visitFunStatement(FunStatement* funstmt){
     Callable* f = new Function(funstmt);
-    this->env->define(funstmt->name.lexeme,f);
+    this->env->define(funstmt->name.lexeme,f,ScopeSpace::LOCAL);
     return nullptr;
 }
 
@@ -472,7 +476,7 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
 Interpreter::Interpreter(bool repl){
     this->env = new environment();
     Callable* clock_func = new ClockCallable();
-    this->env->define("clock",clock_func);
+    this->env->define("clock",clock_func,LOCAL);
     this->REPL = repl;
 }
 Interpreter::~Interpreter(){

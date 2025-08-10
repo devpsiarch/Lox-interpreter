@@ -26,13 +26,20 @@ std::any Function::Call(Interpreter& inter, const std::vector<std::any>& args){
     environment* f =  new environment();
     for (size_t i = 0; i < declaration->params.size(); ++i) {
         const Token& t = declaration->params[i];
-        f->define(t.lexeme, args[i]);
+        const std::type_info& type = args[i].type();
+        // if the object passed to the function is a callable 
+        // we pass it as external and wont be killed when the call is done 
+        // else we pass it as a local (fits the values)
+        // this allows lots of type to by passed , like refrences
+        if(type == typeid(Callable*)){
+            f->define(t.lexeme, args[i],ScopeSpace::EXTERNAL);
+        }else{
+            f->define(t.lexeme, args[i],ScopeSpace::LOCAL);
+        }
     }
     try {
         // this function bellow "executeBlock" will delete the given environment after it is done
         inter.executeBlock(declaration->body, f);
-        //delete f; idk why tf i am deleting here 
-        // hey , tf ur doing here ? get ur shit together
     }catch(const Interpreter::ReturnFlow&e){
         return e.ret_value;
     }

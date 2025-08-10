@@ -1,21 +1,29 @@
 // test calling 
 
 print "begining of the program....";
+
 fun fibo(n) {
     if(n <= 1) return n;
     return fibo(n-1) + fibo(n-2);
 }
-
+/*
 for(var i = 0 ; i < 10 ; i = i + 1){
     print fibo(i);
 }
-
 var test = fun (x) {
+
     print x;
 }
 
-
 test(10);
 test(11);
+*/
+
+
+fun foo(){
+    print "Hello friend";
+}
+
+foo();
 
 print "end of the program....";
