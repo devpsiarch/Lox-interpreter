@@ -4,6 +4,36 @@ My implementation of the lox interpreter in C++.
 
 The goal of this project is to build a full interpreter for the Lox language from scratch, learning how programming languages work under the hood in the process.
 
+```kotlin
+fun factorial(n) {
+    var result = 1;
+    for (var i = 2; i <= n; i = i + 1) {
+        result = result * i;
+    }
+    return result;
+}
+
+fun sumUpTo(limit) {
+    var total = 0;
+    var i = 1;
+    while (i <= limit) {
+        total = total + i;
+        i = i + 1;
+    }
+    return total;
+}
+
+fun map(obj,fn){
+    fn(obj);
+}
+var printer = fun (x) {
+    print x;
+}
+
+```
+
+You can find more code examples in `lox_examples`.
+
 ## 🚧 Project Status
 
 > **In Progress**
@@ -11,11 +41,12 @@ The goal of this project is to build a full interpreter for the Lox language fro
 Currently, the interpreter supports:
 - Lexing (scanning) the source code into tokens
 - Parsing arithmetic expressions into an AST
-- Evaluating arithmetic expressions at runtime
-- Adding support for grouping, comparison, and equality operators
-- Implementing variables and environments
+- Evaluating arithmetic and logical expressions at runtime
+- declaring variables and environment management
 - Supporting control flow (`if`, `while`, etc.)
 - Function definitions and calls
+- anonymous functions and passing them
+- nested Function definitions and calls
 
 Next steps will include:
 

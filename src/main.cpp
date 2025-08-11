@@ -10,6 +10,17 @@ void runPrompt();
 void runFile();
 
 int main(int argc,char *argv[]){
+    // environment* venv = new environment();
+    // environment* sub = new environment();
+    // environment* subsub = new environment();
+    // venv->closing = sub;
+    // sub->closing = subsub;
+    // venv->define("func up",new Callable(),ScopeSpace::LOCAL);
+    // sub->define("func sub",new Callable(),ScopeSpace::LOCAL);
+    // subsub->define("func subsub",new Callable(),ScopeSpace::LOCAL);
+    //
+    // delete venv;
+    // return 0;
     // runPrompt();
     // return 0;
     if(!TESTING){

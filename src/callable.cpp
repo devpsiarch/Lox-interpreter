@@ -23,7 +23,7 @@ Function::Function(FunStatement* stmts){
 }
 
 std::any Function::Call(Interpreter& inter, const std::vector<std::any>& args){
-    environment* f =  new environment();
+    environment* f = new environment();
     for (size_t i = 0; i < declaration->params.size(); ++i) {
         const Token& t = declaration->params[i];
         const std::type_info& type = args[i].type();
@@ -57,6 +57,10 @@ std::string Function::toString() const
 }
 
 Function::~Function(){
-    delete this->declaration;
-    this->declaration = nullptr;
+    // if you want to log
+    //log_delete(this->declaration,"Function::~Function");
+    if(this->declaration){
+        delete this->declaration;
+        this->declaration = nullptr;
+    }
 }

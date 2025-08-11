@@ -51,7 +51,6 @@ public:
     virtual int getArity() const override;
     virtual std::string toString() const override;
     virtual ~Function();
-
-private:
+// intended to be private , forced to be public ....
     FunStatement* declaration;
 };

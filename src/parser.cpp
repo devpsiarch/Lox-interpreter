@@ -440,8 +440,7 @@ std::vector<Statement*> parser::block_statement(){
     std::vector<Statement*> result;
     while(!this->isAtEnd() && !this->check(TokenType::RIGHT_BRACE)){
         std::unique_ptr<Statement> st(this->declaration());
-        if(dynamic_cast<FunStatement*>(st.get()) != nullptr)
-            throw parserError(this->peek(),"cant have nested functions declarations."); 
+        // we use to stop nested functions here , if we wanna mess around.
         result.push_back(st.release());
     }
     try {

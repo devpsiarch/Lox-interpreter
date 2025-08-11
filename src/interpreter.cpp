@@ -321,15 +321,17 @@ void Interpreter::executeBlock(std::vector<Statement*>&stmts,environment*venv = 
     }catch(...){
         // we rethrow because we are not reponsible to determine if the 
         // control statememt is coherient
-        (env) = (child)->closing; 
+        (this->env) = (child)->closing; 
         (child)->closing = nullptr;
+        child->clean_env_frame();
         delete child;
         child = nullptr;
         throw;
     }
     // sorry about the code ... 
-    (env) = (child)->closing; 
+    (this->env) = (child)->closing; 
     (child)->closing = nullptr;
+    child->clean_env_frame();
     delete child;
     child = nullptr;
 }
@@ -480,6 +482,7 @@ Interpreter::Interpreter(bool repl){
     this->REPL = repl;
 }
 Interpreter::~Interpreter(){
+    if(this->env->closing != nullptr) std::cout << "WHERE ARE IN THE SHIT RN\n";
     delete this->env;
     this->env = nullptr;
 }

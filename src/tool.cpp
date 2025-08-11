@@ -1,7 +1,4 @@
 #include "../include/tool/tool.h"
-#include "../include/expr.h"
-#include "../include/lexer.h"
-#include "../include/parser.h"
 
 std::string type_to_string(const std::type_info& t){
     if (t == typeid(double)) {
@@ -55,4 +52,13 @@ std::string read_file(const std::string&filename){
     std::stringstream buffer;
     buffer << file.rdbuf();
     return buffer.str();
+}
+void log_delete(const void* ptr, const char* who) {
+    if (!ptr) return;
+    if (deleted_ptrs.count((void*)ptr)) {
+        std::cerr << "[ERROR] Double delete detected: " << ptr << " by " << who << "\n";
+    } else {
+        deleted_ptrs.insert((void*)ptr);
+        std::cerr << "Deleting " << ptr << " from " << who << "\n";
+    }
 }

@@ -3,6 +3,7 @@
 #include "./statement.h"
 #include "./environment.h" 
 #include "./callable.h"
+#include <assert.h>
 
 class environment;
 
