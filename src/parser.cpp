@@ -324,7 +324,7 @@ Statement* parser::declaration(){
     }catch(const parserError&e){
         std::string err_msg = e.what();
         Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
-        this->synchronize();
+        exit(0);
         return nullptr;
     }
     return st;
@@ -558,15 +558,9 @@ Expression* parser::parse(){
 
 std::vector<Statement*> parser::parserProgram(){
     std::vector<Statement*> stmts;
-    try {
-        while(!this->isAtEnd()){
-            Statement* next = this->declaration();
-            stmts.push_back(next);
-        }
-    }catch(const parserError&e){
-        std::string err_msg = e.what();
-        Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
+    while(!this->isAtEnd()){
+        Statement* next = this->declaration();
+        stmts.push_back(next);
     }
-    // returns empty if failed , maybe ill change this to return a pointer to a vector instead
     return stmts;
 }
