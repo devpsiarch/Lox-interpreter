@@ -2,6 +2,7 @@
 #include "./lexer.h"
 #include "./expr.h"
 #include "./statement.h"
+#include "./afun.h"
 #include <exception>
 #include <memory>
 #include <vector>
@@ -12,13 +13,12 @@
 
         declaration    → varDeclare | statement | funDeclare ;
 
-        varDeclare     → "var" IDENTIFIER '=' (expression | anonymous_function) ';' ;
+        varDeclare     → "var" IDENTIFIER '=' expression ';' ;
  
         funDeclare     → "fun" function  ;
 
         function       → IDENTIFIER '(' parameters? ')' blockstatement; 
 
-        anonymous_function  → 'fun' '(' parameters? ')' blockstatement;
 
         parameters     → IDENTIFIER ( ',' IDENTIFIER )*  ;
 
@@ -47,6 +47,8 @@
         expression     → assignement;
 
         assignement    →  IDENTIFIER "=" assignement | conditional | logic_or;
+        
+        anonymous_function  → 'fun' '(' parameters? ')' blockstatement;
 
         logic_or       → logic_and ("or" logic_and)*;
     
@@ -67,7 +69,7 @@
                         | call ;
         call           → primary ( "(" arguments ")" )*  ;
         arguments      → expression ( "," expression )*  ;
-        primary        → NUMBER | STRING | "true" | "false" | "nil" | IDENTIFIER
+        primary        → NUMBER | STRING | "true" | "false" | "nil" | IDENTIFIER | anonymous_function
                         | "(" expression ( "," expression )* ")" ;
 
 
@@ -106,6 +108,7 @@ private:
     Token advance();// consumes the current token and returns it
     Token previous(); // returns the previous token 
     Token peek(); // returns the current token without consuming it
+    void rewind(); // vomits a already consumed token , use with caution
     template <typename ...Token> bool match(Token... tokens);
 
     
@@ -124,6 +127,7 @@ private:
     Expression* assignement();
     Expression* logic_or();
     Expression* logic_and();
+    Expression* a_fun();
 
     Statement* statement();
     Statement* declaration();

@@ -272,6 +272,11 @@ std::any Interpreter::visitLogicalExpression(Logical* lor){
     }    
 }
 
+
+std::any Interpreter::visitAFunExpression(AFun* afun){
+    return 69;
+}
+
 std::any Interpreter::visitExpressionStatement(ExpressionStatement* estmt){
     std::any value = this->evaluate(estmt->expr);
     if(this->REPL)

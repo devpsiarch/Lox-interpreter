@@ -32,6 +32,11 @@ Token parser::advance(){
     if(!isAtEnd()) this->current++;
     return this->previous();
 }
+
+void parser::rewind(){
+    if(this->current != 0) --this->current;
+}
+
 template <typename ...Token> bool parser::match(Token... tokens){
     bool did_advance = false;
     bool found = ( ( check(tokens) 
@@ -93,6 +98,32 @@ Expression* parser::logic_and(){
         left.reset(new Logical(op,left.release(),right.release()));
     }
     return left.release();
+}
+
+Expression* parser::a_fun(){
+    // taken from the function parsing , lol am getting sloppy
+    std::vector<Token> params;
+    // we get the parameters
+    this->consume(TokenType::LEFT_PAREN,"Expected \'(\' after the function name");
+    if(!this->check(TokenType::RIGHT_PAREN)){
+        do {
+            if(params.size() >= 255){
+                std::string err_msg = 
+                    "Exceeded max number of arguments <255>.";
+                Logger::error(this->previous().line,
+                              this->previous().col,err_msg);
+                break;
+            }
+            params.push_back(this->consume(TokenType::IDENTIFIER,
+                "Expected parameter in function definition.")); 
+        } while(this->match(TokenType::COMMA));
+    }
+    this->consume(TokenType::RIGHT_PAREN,
+            "Expected \')\' after function parameters.");
+    this->consume(TokenType::LEFT_BRACE,
+            "Expected \'{\' before function block.");   
+    std::vector<Statement*> result = this->block_statement();
+    return new AFun(this->previous(),params,result);        
 }
 
 Expression* parser::conditional(){
@@ -236,6 +267,7 @@ Expression* parser::get_call(std::unique_ptr<Expression>&caller){
 }
 
 Expression* parser::primary(){
+    if(this->match(TokenType::FUN)) return a_fun();
     if(this->match(TokenType::FALSE)) return new Literal(false);
     if(this->match(TokenType::TRUE)) return new Literal(true);
     if(this->match(TokenType::NIL)) return new Literal(nullptr);
@@ -285,16 +317,17 @@ Statement* parser::statement(){
 }
 
 Statement* parser::declaration(){
+    Statement* st;
     try {
-        if(this->match(TokenType::VAR)) return declare_statement();
-        return statement();
+        if(this->match(TokenType::VAR)) st = declare_statement();
+        else st = statement();
     }catch(const parserError&e){
         std::string err_msg = e.what();
         Logger::error(e.faulty_token.line,e.faulty_token.col,err_msg);
         this->synchronize();
         return nullptr;
     }
-
+    return st;
 }
 
 Statement* parser::print_statement(){
@@ -312,37 +345,27 @@ Statement* parser::declare_statement(){
     Token name = consume(TokenType::IDENTIFIER,"Expected variable name after declaration.");
     std::unique_ptr<Expression> value;
     if(this->match(TokenType::EQUAL)){
-        // parse if we have a anymous function
-        if(this->match(TokenType::FUN)){
-            // taken from the function parsing , lol am getting sloppy
-            std::vector<Token> params;
-            // we get the parameters
-            this->consume(TokenType::LEFT_PAREN,"Expected \'(\' after the function name");
-            if(!this->check(TokenType::RIGHT_PAREN)){
-                do {
-                    if(params.size() >= 255){
-                        std::string err_msg = 
-                            "Exceeded max number of arguments <255>.";
-                        Logger::error(this->previous().line,
-                                      this->previous().col,err_msg);
-                        break;
-                    }
-                    params.push_back(this->consume(TokenType::IDENTIFIER,
-                        "Expected parameter in function definition.")); 
-                } while(this->match(TokenType::COMMA));
-            }
-            this->consume(TokenType::RIGHT_PAREN,
-                    "Expected \')\' after function parameters.");
-            this->consume(TokenType::LEFT_BRACE,
-                    "Expected \'{\' before function block.");   
-            std::vector<Statement*> result = this->block_statement();
-            return new FunStatement(name,params,result);        
-        }else{
-            value.reset(this->expression()); 
-        }
+        value.reset(this->expression()); 
     }
     this->consume(TokenType::SEMICOLEN,"Expected \';\' after variable declaration.");
-    return new DeclareStatement(name,value.release());
+    // here we check the possibility of the value expression being a 
+    // anonymous function
+    AFun* anony = dynamic_cast<AFun*>(value.get());
+    // if it isnt , we return a normal DeclareStatement
+    if(anony == nullptr){
+        return new DeclareStatement(name,value.release());
+    }else{
+        // else , we consider it as a function declaration
+        // we tell the AFun API that this anonymous function has found its bind 
+        // therefore , when you clean yourself , dont kill the statements because the 
+        // FunStatement will own them later
+        anony->setbind();
+        // get the guts of the anonymous function
+        std::vector<Token> params = anony->params;
+        std::vector<Statement*> body = anony->body;
+        // give them to the bounded function
+        return new FunStatement(name,params,body);
+    }
 }
 
 Statement* parser::if_statement(){
@@ -479,6 +502,13 @@ void parser::synchronize(void){
 
 Statement* parser::function_statement(){
     // parse the identifer that the function call binds to
+    if(!this->check(TokenType::IDENTIFIER)){
+        // we rewind because the in the primary parsing function
+        // while parsing the anonymous function , it assumes the "fun" token 
+        // has not been consumed yet
+        this->rewind();
+        return expression_statement();
+    }
     Token funName = this->consume(TokenType::IDENTIFIER,
                 "Expected function name after declaration.");
     this->consume(TokenType::LEFT_PAREN,
@@ -530,7 +560,8 @@ std::vector<Statement*> parser::parserProgram(){
     std::vector<Statement*> stmts;
     try {
         while(!this->isAtEnd()){
-            stmts.push_back(this->declaration());
+            Statement* next = this->declaration();
+            stmts.push_back(next);
         }
     }catch(const parserError&e){
         std::string err_msg = e.what();

@@ -23,6 +23,7 @@ private:
     virtual std::any visitAssignExpression(Assign*ass) override;
     virtual std::any visitConditionalExpression(Conditional*con) override;
     virtual std::any visitLogicalExpression(Logical* lor) override;
+    virtual std::any visitAFunExpression(AFun* afun) override;
 
     virtual std::any visitExpressionStatement(ExpressionStatement* estmt) override;
     virtual std::any visitPrintStatement(PrintStatement* pstmt) override;

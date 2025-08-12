@@ -18,6 +18,7 @@ class Assign;
 class Conditional;
 class Logical;
 class Call;
+class AFun;
 
 class Expression {
 public:
@@ -35,6 +36,7 @@ public:
         virtual std::any visitConditionalExpression(Conditional*con);
         virtual std::any visitLogicalExpression(Logical* lor);
         virtual std::any visitCallExpression(Call* callme);
+        virtual std::any visitAFunExpression(AFun* afun);
 
         std::string astprinter(Expression*exp) {
             return stdany_to_string(exp->accept(*this));

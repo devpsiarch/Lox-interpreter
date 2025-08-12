@@ -17,6 +17,7 @@ fun domaster(){
 domaster();
 
 // function passage
+/*
 fun map(obj,fn){
     fn(obj);
 }
@@ -25,7 +26,7 @@ var printer = fun (x) {
 }
 
 map(100,printer);
-
+*/
 fun fibo(n) {
     if(n <= 1) return n;
     return fibo(n-1) + fibo(n-2);
@@ -34,7 +35,6 @@ for(var i = 0 ; i < 10 ; i = i + 1){
     print fibo(i);
 }
 var test = fun (x) {
-
     print x;
 }
 
@@ -53,5 +53,7 @@ fun foo(){
 }
 
 foo();
+
+
 
 print "end of the program....";

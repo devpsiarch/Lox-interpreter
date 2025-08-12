@@ -54,3 +54,8 @@ std::any Expression::VisitorRPN::visitGroupingExpression(Grouping*gro){
 std::any Expression::Visitor::visitLogicalExpression(Logical* lor){
     return this->parenthensize(lor->op.lexeme,lor->left,lor->right); 
 }
+
+std::any Expression::Visitor::visitAFunExpression(AFun* afun){
+    (void)afun;
+    return "Anonymous function.";
+}

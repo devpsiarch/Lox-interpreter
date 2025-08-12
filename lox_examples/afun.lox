@@ -1,0 +1,5 @@
+
+var x = fun (x,y) {
+    print x + y;
+};
+x(1,3);
