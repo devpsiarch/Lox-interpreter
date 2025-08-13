@@ -19,6 +19,7 @@
 enum ScopeSpace {
     LOCAL,
     EXTERNAL,
+    AFUN,
 };
 
 class environment {

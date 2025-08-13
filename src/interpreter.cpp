@@ -233,6 +233,12 @@ std::any Interpreter::visitVariableExpression(Variable*var){
 std::any Interpreter::visitAssignExpression(Assign*ass){
     try {
         std::any value = this->evaluate(ass->expr);
+        auto package_back =  this->env->get(ass->op.lexeme);
+        const std::type_info& t = package_back.first.type();
+        if(t == typeid(Callable*)){
+            Callable* p = std::any_cast<Callable*>(package_back.first);
+            delete p;
+        }
         this->env->assign(ass->op.lexeme,value,ScopeSpace::LOCAL);
         return value;
     }catch(const environment::NameError&e){
@@ -274,7 +280,7 @@ std::any Interpreter::visitLogicalExpression(Logical* lor){
 
 
 std::any Interpreter::visitAFunExpression(AFun* afun){
-    return 69;
+    return afun;
 }
 
 std::any Interpreter::visitExpressionStatement(ExpressionStatement* estmt){
@@ -472,7 +478,7 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
         // since they are deleted when the interepretation for 
         // some scope dies
         Statement* st = stmt[i];
-        if(dynamic_cast<FunStatement*>(st) == nullptr){
+        if(typeid(FunStatement*) == typeid(st)){
             delete st; 
             st = nullptr;    
         }
@@ -487,7 +493,6 @@ Interpreter::Interpreter(bool repl){
     this->REPL = repl;
 }
 Interpreter::~Interpreter(){
-    if(this->env->closing != nullptr) std::cout << "WHERE ARE IN THE SHIT RN\n";
     delete this->env;
     this->env = nullptr;
 }

@@ -1,4 +1,5 @@
 # Lox Interpreter
+> This project is not finished yet, still have problems and bugs.
 
 My implementation of the lox interpreter in C++.
 
@@ -28,7 +29,7 @@ fun map(obj,fn){
 }
 var printer = fun (x) {
     print x;
-}
+};
 
 ```
 
@@ -60,6 +61,10 @@ Next steps will include:
 - [x] **Lexer (Scanner)** — Converts source code into tokens
 - [x] **Parser** — Converts tokens into an abstract syntax tree (AST)
 - [x] **Interpreter** — Evaluates arithmetic and logical  
+
+## Problems to fix 
+- [ ] reassignement bug.
+- [ ] runtime binding of functions when passed to other.
 
 ## 🧠 Motivation
 

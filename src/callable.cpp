@@ -1,4 +1,5 @@
 #include "../include/callable.h"
+#include <any>
 
 /* Usual callable generic class implimentation */
 
@@ -31,7 +32,13 @@ std::any Function::Call(Interpreter& inter, const std::vector<std::any>& args){
         // we pass it as external and wont be killed when the call is done 
         // else we pass it as a local (fits the values)
         // this allows lots of type to by passed , like refrences
-        if(type == typeid(Callable*)){
+        if(type == typeid(AFun*)){
+            AFun* afun = std::any_cast<AFun*>(args[i]);
+            FunStatement* st = new FunStatement(t,afun->params,afun->body);
+            Callable* binded_function = new Function(st);
+            f->define(t.lexeme, binded_function, ScopeSpace::LOCAL);
+        }
+        else if(type == typeid(Callable*)){
             f->define(t.lexeme, args[i],ScopeSpace::EXTERNAL);
         }else{
             f->define(t.lexeme, args[i],ScopeSpace::LOCAL);

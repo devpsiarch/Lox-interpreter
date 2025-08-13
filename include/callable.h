@@ -1,6 +1,7 @@
 #pragma once
 #include "./interpreter.h"
 #include "./environment.h"
+#include "./afun.h"
 #include <chrono>
 
 class Interpreter;
