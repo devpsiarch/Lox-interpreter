@@ -1,4 +1,5 @@
 #include "../include/interpreter.h"
+#include <any>
 /* stopped at handling the checking for types when evaluating*/
 
 
@@ -232,13 +233,13 @@ std::any Interpreter::visitVariableExpression(Variable*var){
 
 std::any Interpreter::visitAssignExpression(Assign*ass){
     try {
-        std::any value = this->evaluate(ass->expr);
         auto package_back =  this->env->get(ass->op.lexeme);
-        const std::type_info& t = package_back.first.type();
-        if(t == typeid(Callable*)){
-            Callable* p = std::any_cast<Callable*>(package_back.first);
-            delete p;
+        if((package_back.first.type() == typeid(Callable*))){
+            Callable* ptr = std::any_cast<Callable*>(package_back.first);
+            delete ptr;
+            ptr = nullptr;
         }
+        std::any value = this->evaluate(ass->expr);
         this->env->assign(ass->op.lexeme,value,ScopeSpace::LOCAL);
         return value;
     }catch(const environment::NameError&e){
@@ -278,9 +279,17 @@ std::any Interpreter::visitLogicalExpression(Logical* lor){
     }    
 }
 
-
 std::any Interpreter::visitAFunExpression(AFun* afun){
-    return afun;
+    FunStatement* st = new FunStatement(afun->paren,afun->params,afun->body);
+    Callable* tobe_binded_function = new Function(st);
+    
+    // sets the bind flag to true, that prevents from deletion sense 
+    // the interpreter owns the expression inside
+    afun->setbind();
+    // adds the callable to the late_fun where late binded function are stored 
+    // to be deleted (deleted after full interpretation)
+    this->late_fun.push_back(tobe_binded_function);
+    return tobe_binded_function;
 }
 
 std::any Interpreter::visitExpressionStatement(ExpressionStatement* estmt){
@@ -473,15 +482,26 @@ void Interpreter::InterpretProgram(std::vector<Statement*>& stmt){
         goto defer;
     }
     defer:
+    // we delete pre_parsed statements 
     for(size_t i = 0; i < stmt.size(); ++i){
         // we dont delete the function declaration statements 
         // since they are deleted when the interepretation for 
         // some scope dies
+        
+        // we always downcast here dummy , it polymorph shit
         Statement* st = stmt[i];
-        if(typeid(FunStatement*) == typeid(st)){
+        if(st == nullptr) continue;
+        if(dynamic_cast<FunStatement*>(st) == nullptr){
             delete st; 
             st = nullptr;    
         }
+    }
+    // we also delete late binded functions that are caused for now by:
+    //    -> passing non-binded anonymous function to functions
+    for(Callable* fn:late_fun){
+        if(fn == nullptr) continue;
+        delete fn; 
+        fn = nullptr;    
     }
 }
 

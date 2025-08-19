@@ -35,7 +35,7 @@ var printer = fun (x) {
 
 You can find more code examples in `lox_examples`.
 
-## 🚧 Project Status
+## Project Status
 
 > **In Progress**
 
@@ -56,25 +56,19 @@ Next steps will include:
 - FFI to execute libc functionality.
 - Multithreading feature.
 
-## 🔧 What’s Implemented
+## What’s Implemented
 
 - [x] **Lexer (Scanner)** — Converts source code into tokens
 - [x] **Parser** — Converts tokens into an abstract syntax tree (AST)
 - [x] **Interpreter** — Evaluates arithmetic and logical  
 
 ## Problems to fix 
-- [ ] reassignement bug.
-- [ ] runtime binding of functions when passed to other.
+- [X] reassignement bug.
+- [X] runtime binding of functions when passed to other causes leaks.
 
-## 🧠 Motivation
+## Motivation
 
 I'm building this interpreter to deeply understand how programming languages work, from source code to execution.i choose to write a interpreter for a already designed programming language, while not a perfect replica but adding what i please in features and writing my own when ready. 
-## 📚 Reference
+## Reference
 
 - [Crafting Interpreters by Bob Nystrom](https://craftinginterpreters.com/)
-
-## ✍️ Author
-
-Made with ❤️ by devpsiarch
----
-Feel free to follow this project or fork it if you’re also learning from the book!

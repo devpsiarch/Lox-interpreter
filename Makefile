@@ -7,7 +7,7 @@ CXXFLAGS := -Wall -Wextra -fsanitize=address -g -std=c++17
 SRC_DIR := src
 INC_DIR := include
 BUILD_DIR := build
-BIN := main
+BIN := cpplox
 
 # Find all .cpp files in src directory
 SRCS := $(wildcard $(SRC_DIR)/*.cpp)
@@ -34,7 +34,8 @@ clean:
 	rm -rf $(BUILD_DIR) $(BIN)
 
 # Optional: run the program
+# Optional: args is arguments passed by the uses such as this "make run args="something here"
 run: $(BIN)
-	./$(BIN)
+	./$(BIN) $(args) 
 
 .PHONY: all clean run

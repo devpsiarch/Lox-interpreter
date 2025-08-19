@@ -15,7 +15,7 @@ std::any Expression::Visitor::visitCallExpression(Call* callme){
    return this->parenthensize(callme->paren.lexeme,callme->callee); 
 }
 std::any Expression::Visitor::visitBinaryExpression(Binary*bin){
-   return this->parenthensize(bin->op.lexeme,bin->right,bin->left); 
+   return this->parenthensize(bin->op.lexeme,bin->left,bin->right); 
 }
 std::any Expression::Visitor::visitGroupingExpression(Grouping*gro){
    return this->parenthensize("group",gro->expression); 
@@ -46,7 +46,7 @@ std::any Expression::VisitorRPN::visitUnaryExpression(Unary*uni){
 }
 
 std::any Expression::VisitorRPN::visitBinaryExpression(Binary*bin){
-   return this->parenthensize(bin->op.lexeme,bin->right,bin->left); 
+   return this->parenthensize(bin->op.lexeme,bin->left,bin->right); 
 }
 std::any Expression::VisitorRPN::visitGroupingExpression(Grouping*gro){
    return this->parenthensize("group",gro->expression); 

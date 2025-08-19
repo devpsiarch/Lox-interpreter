@@ -6,12 +6,14 @@
 #include <assert.h>
 
 class environment;
+class Callable;
 
 class Interpreter : public Expression::Visitor , public Statement::Visitor {
 private:
 
     environment* env;
     bool REPL;
+    std::vector<Callable*> late_fun;
 
     virtual std::any visitLiteralExpression(Literal*lit) override;
     virtual std::any visitUnaryExpression(Unary*una) override;

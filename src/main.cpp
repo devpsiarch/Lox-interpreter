@@ -1,87 +1,35 @@
+#include "../include/interface.h"
 #include "../testa.h"
-#include "../include/lexer.h"
-#include "../include/expr.h"
-#include "../include/parser.h"
-#include "../include/interpreter.h"
 
-#define TESTING 0
-int test(void);
-void runPrompt();
-void runFile();
+#define LOX "lox_examples/"
+#define EXT ".lox"
+
+std::vector<std::string> files = {"afun","expr","func","loops","test2"};
+
+#define TESTING 1
+int test(); 
 
 int main(int argc,char *argv[]){
-    // environment* venv = new environment();
-    // environment* sub = new environment();
-    // environment* subsub = new environment();
-    // venv->closing = sub;
-    // sub->closing = subsub;
-    // venv->define("func up",new Callable(),ScopeSpace::LOCAL);
-    // sub->define("func sub",new Callable(),ScopeSpace::LOCAL);
-    // subsub->define("func subsub",new Callable(),ScopeSpace::LOCAL);
-    //
-    // delete venv;
-    // return 0;
-    // runPrompt();
-    // return 0;
-    if(!TESTING){
-        Expression::Visitor v;
-        Expression::VisitorRPN vr;
-        (void)vr;
-        Lexer l = Lexer(read_file("lox_examples/afun.lox"));
-        l.scanSource();
-        parser p = parser(l.tokens);
-        std::vector<Statement*> stmnt =  p.parserProgram();
-        Interpreter inter;
-        inter.InterpretProgram(stmnt);
-        return 0;
+#if !TESTING
+    // Expression::Visitor v;
+    // Expression::VisitorRPN vr;
+    if(argc <= 1 || argc >= 3){
+        std::cout << "usage: ./lox <filename>.lox \n";
     }else{
-        test();
-        return 0;
+        interface::interpret_file(argv[1]);
     }
-}
-
-
-void eval_expr(const std::string&line){
-    Lexer l = Lexer(line);
-    l.scanSource();
-    parser p = parser(l.tokens);
-    Expression* expr = p.parse();
-    if(expr == nullptr) return ;           
-    Expression::Visitor v;
-    Interpreter inter;
-    inter.Interpret(expr);
-    std::string ast_str = v.astprinter(expr);
-    std::cout << ast_str << '\n';
-    delete expr;
-    expr = nullptr;
-}
-
-void run_line(Interpreter&inter,const std::string&line){
-    Lexer l = Lexer(line);
-    l.scanSource();
-    parser p = parser(l.tokens);
-    std::vector<Statement*> stmts = p.parserProgram();
-    inter.InterpretProgram(stmts);
-}
-
-void runPrompt(){
-    std::string line;
-    bool shouldclose = false;
-    Interpreter inter(true);
-    while(!shouldclose){
-        // interpritation here
-        std::cout << "=> ";
-        std::getline(std::cin,line);
-        if(line == "exit"){
-            shouldclose = true;
-            continue;
-        }else if(line == "clear"){
-            system("clear");
-            continue;
-        }
-        //eval_expr(line);
-        run_line(inter,line);
+    return 0;
+#else
+    // this process mainly checks for memory leaks 
+    // its a real pain here to be honest
+    for(size_t i = 0 ; i < files.size() ; ++i){
+        std::string temp = LOX + files[i] + EXT;
+        std::cout << "EXECUTING [" << temp << "] ---------------------------\n";
+        interface::interpret_file(temp.c_str());
     }
+    test();
+    return 0;
+#endif
 }
 
 int test(void){
@@ -343,3 +291,4 @@ int test(void){
     EndTesta();
     return 0;
 }
+

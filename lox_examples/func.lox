@@ -21,6 +21,7 @@ domaster();
 fun map(obj,fn){
     fn(obj);
 }
+
 var printer = fun (x) {
     print x;
 };
