@@ -6,7 +6,7 @@
 
 std::vector<std::string> files = {"afun","expr","func","loops","test2"};
 
-#define TESTING 1
+#define TESTING 0
 int test(); 
 
 int main(int argc,char *argv[]){

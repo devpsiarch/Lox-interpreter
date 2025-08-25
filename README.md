@@ -65,10 +65,12 @@ Next steps will include:
 ## Problems to fix 
 - [X] reassignement bug.
 - [X] runtime binding of functions when passed to other causes leaks.
+- [ ] anonymous function reassignement causes double-free.
 
 ## Motivation
 
 I'm building this interpreter to deeply understand how programming languages work, from source code to execution.i choose to write a interpreter for a already designed programming language, while not a perfect replica but adding what i please in features and writing my own when ready. 
+
 ## Reference
 
 - [Crafting Interpreters by Bob Nystrom](https://craftinginterpreters.com/)

@@ -233,15 +233,44 @@ std::any Interpreter::visitVariableExpression(Variable*var){
 
 std::any Interpreter::visitAssignExpression(Assign*ass){
     try {
+        Callable* function = nullptr;
+        Expression* rvalue = ass->expr;
+        // checking the moving of functions since, every anonymous function 
+        // can be owned by a single variable 
+        Variable* var = dynamic_cast<Variable*>(rvalue);
+        if(var != nullptr){
+            // checking if the content is a function
+            auto r_content =  this->env->get(var->name.lexeme);
+            if((r_content.first.type() == typeid(Callable*))){
+                function = std::any_cast<Callable*>(r_content.first);
+                this->env->assign(var->name.lexeme,nullptr,ScopeSpace::LOCAL);
+            }
+        }
+        auto l_content =  this->env->get(ass->op.lexeme);
+        if((l_content.first.type() == typeid(Callable*))){
+            Callable* ptr = std::any_cast<Callable*>(l_content.first);
+            this->late_fun.push_back(ptr);
+        }
+        if(function == nullptr){
+            // evaluate then assign
+            std::any value = this->evaluate(ass->expr);
+            this->env->assign(ass->op.lexeme,value,ScopeSpace::LOCAL);
+            return value;
+        }else{
+            // move the function 
+            this->env->assign(ass->op.lexeme,function,ScopeSpace::LOCAL);
+            return nullptr;
+        }
+        /*
         auto package_back =  this->env->get(ass->op.lexeme);
         if((package_back.first.type() == typeid(Callable*))){
             Callable* ptr = std::any_cast<Callable*>(package_back.first);
-            delete ptr;
-            ptr = nullptr;
+            this->late_fun.push_back(ptr);
         }
         std::any value = this->evaluate(ass->expr);
         this->env->assign(ass->op.lexeme,value,ScopeSpace::LOCAL);
         return value;
+        */
     }catch(const environment::NameError&e){
         throw RunTimeError(ass->op,e.what()); 
     }
@@ -309,8 +338,19 @@ std::any Interpreter::visitPrintStatement(PrintStatement* pstmt){
 std::any Interpreter::visitDeclareStatement(DeclareStatement* dstmt){
     try {
         std::any value = nullptr;
-        if(dstmt->init != nullptr){
-            value = this->evaluate(dstmt->init);
+        Expression* rvalue = dstmt->init;
+        if(rvalue != nullptr){
+            Variable* var = dynamic_cast<Variable*>(rvalue);
+            if(var != nullptr){
+                // checking if the content is a function
+                auto r_content =  this->env->get(var->name.lexeme);
+                if((r_content.first.type() == typeid(Callable*))){
+                    value = std::any_cast<Callable*>(r_content.first);
+                    this->env->assign(var->name.lexeme,nullptr,ScopeSpace::LOCAL);
+                }
+            }else{
+                value = this->evaluate(dstmt->init);
+            }
         }
         this->env->define(dstmt->name.lexeme,value,ScopeSpace::LOCAL);
         return nullptr;
