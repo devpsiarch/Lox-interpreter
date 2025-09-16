@@ -4,7 +4,12 @@ void interface::interpret_file(const char*filename){
     Expression::Visitor v;
     Lexer l = Lexer(read_file(filename));
     l.scanSource();
+    // pasing <syntatic analysis>
     parser p = parser(l.tokens);
+    // we can out more step here before the parsing 
+    // like if lox was staticly typed , we would check the types here
+    // we can also put a <symantic analysis> layer here and resolve a bunch of variables
+    // or add a optimlzation layer here
     std::vector<Statement*> stmnt =  p.parserProgram();
     Interpreter inter;
     inter.InterpretProgram(stmnt);

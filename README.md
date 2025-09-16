@@ -61,12 +61,14 @@ Next steps will include:
 - [x] **Lexer (Scanner)** — Converts source code into tokens
 - [x] **Parser** — Converts tokens into an abstract syntax tree (AST)
 - [x] **Interpreter** — Evaluates arithmetic and logical  
+- [ ] **Optimization layter ** — Walks the AST once before interpretation to shorten the execution instructions.
 
 ## Problems to fix 
 - [X] reassignement bug.
 - [X] runtime binding of functions when passed to other causes leaks.
-- [ ] anonymous function reassignement causes double-free.
-
+- [X] anonymous function reassignement causes double-free.
+- [ ] anonymous function reassignement inside another function scope leave it double-free.
+ 
 ## Motivation
 
 I'm building this interpreter to deeply understand how programming languages work, from source code to execution.i choose to write a interpreter for a already designed programming language, while not a perfect replica but adding what i please in features and writing my own when ready. 

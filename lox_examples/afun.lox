@@ -18,10 +18,3 @@ fun thrice(fn) {
 thrice( 
     x
 );
-
-
-var y = x;
-var z = y;
-
-
-thrice(z);

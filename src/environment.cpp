@@ -34,7 +34,6 @@ bool environment::isKeyIn(const std::string&key){
     return this->SymbolTable.find(key) != this->SymbolTable.end();
 }
 
-
 void environment::clean_env_frame(){
     for(auto it = SymbolTable.begin() ; it != SymbolTable.end() && it->second.second == ScopeSpace::LOCAL;){
         const std::type_info& t = it->second.first.type();
@@ -59,7 +58,6 @@ void environment::clean_env_frame(){
         }
     }
 }
-
 
 environment::environment(){
     this->closing = nullptr;

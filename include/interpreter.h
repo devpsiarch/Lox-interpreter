@@ -4,6 +4,7 @@
 #include "./environment.h" 
 #include "./callable.h"
 #include <assert.h>
+#include <any>
 
 class environment;
 class Callable;
@@ -79,7 +80,7 @@ private:
     
     // this does a similar job as the above , it allows us to return a value 
     // from an arbitrarly nested statements inside a function 'only'
-    public: class ReturnFlow : public std::exception {
+public: class ReturnFlow : public std::exception {
     public:   
         Token op;
         std::any ret_value;

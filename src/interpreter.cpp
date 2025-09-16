@@ -1,8 +1,5 @@
 #include "../include/interpreter.h"
-#include <any>
 /* stopped at handling the checking for types when evaluating*/
-
-
 
 bool Interpreter::checkType(const std::type_info&expected,std::any obj1,std::any obj2){
     const std::type_info& l = obj1.type();
@@ -223,7 +220,7 @@ std::any Interpreter::visitVariableExpression(Variable*var){
     try {
         // we might wanna check these stuff for the ScopeSpace later
         // so keep the "auto package" here for now
-        auto package_back =  this->env->get(var->name.lexeme);
+        std::pair<std::any,ScopeSpace> package_back =  this->env->get(var->name.lexeme);
         return package_back.first;
     }catch(const environment::NameError&e){
         throw RunTimeError(var->name,e.what()); 
